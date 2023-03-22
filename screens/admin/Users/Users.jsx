@@ -28,6 +28,8 @@ export default function Users() {
     const [selectFirstName, setSelectFirstName] = useState("");
     const [selectLastName, setSelectLastName] = useState("");
 
+    const [isTextDisabled, setIsTextDisabled] = useState(true);
+
     useEffect(() => {
         getCurrentUser()
     })
@@ -41,7 +43,7 @@ export default function Users() {
     }, [search, users])
 
     const filterUser = () => {
-          let data =  users.filter(item => {
+        let data = users.filter(item => {
                 return item.firstname.toLowerCase().includes(search.toLowerCase()) ||
                     item.lastname.toLowerCase().includes(search.toLowerCase()) ||
                     item.email.toLowerCase().includes(search.toLowerCase()) ||
@@ -112,6 +114,7 @@ export default function Users() {
             addNewUserDialogOpen()
             await allUsers()
             filterUser()
+            setAddUserDialogVisible(false)
         } catch (e) {
 
         }
@@ -138,7 +141,6 @@ export default function Users() {
     }
 
     const viewUserDialogOpen = (item) => {
-        console.log(item)
         setSelectedUser(item)
         setSelectEmail(item.email)
         setSelectFirstName(item.firstname)
@@ -150,6 +152,17 @@ export default function Users() {
         setAddUserDialogVisible(!addUserDialogVisible)
     };
 
+    const  closeViewDialog = ()=>{
+        setIsTextDisabled(!isTextDisabled)
+        setViewUserDialogVisible(!viewUserDialogVisible);
+    }
+    const  closeAddDialog = ()=>{
+        setAddUserDialogVisible(!addUserDialogVisible);
+    }
+
+    const enableEditableText = () => {
+        setIsTextDisabled(!isTextDisabled)
+    }
 
     return (
         <View style={{flex: 1}}>
@@ -204,6 +217,7 @@ export default function Users() {
                         style={styles.input}
                         placeholderTextColor="#aaaaaa"
                         underlineColorAndroid="transparent"
+                        disabled={isTextDisabled}
                         autoCorrect={false}
                         placeholder="Ishara Madusanka"
                         autoCapitalize="none"
@@ -217,7 +231,7 @@ export default function Users() {
                     <TextInput
                         style={styles.input}
                         placeholderTextColor="#aaaaaa"
-                        disabled
+                        disabled={isTextDisabled}
                         underlineColorAndroid="transparent"
                         autoCorrect={false}
                         placeholder="Ishara Madusanka"
@@ -233,6 +247,7 @@ export default function Users() {
                         style={styles.input}
                         placeholderTextColor="#aaaaaa"
                         underlineColorAndroid="transparent"
+                        disabled={isTextDisabled}
                         autoCorrect={false}
                         placeholder="Ishara@gmail.com"
                         autoCapitalize="none"
@@ -252,20 +267,44 @@ export default function Users() {
                         <Picker.Item label="Teacher" value="teacher"/>
                         <Picker.Item label="Checker" value="checker"/>
                     </Picker>
-                    <View style={{
-                        flex: 1,
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        paddingHorizontal: 16,
-                        marginTop: 20
-                    }}>
-                        <TouchableOpacity style={styles.editButton} onPress={updateUser}>
-                            <Text style={styles.dialogButtonText}>Edit</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.deleteButton}>
-                            <Text style={styles.dialogButtonText}>Delete</Text>
-                        </TouchableOpacity>
-                    </View>
+                    {
+                        isTextDisabled && <View style={{
+                            flex: 1,
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            paddingHorizontal: 16,
+                            marginTop: 20
+                        }}
+
+                        >
+                            <TouchableOpacity style={styles.editButton} onPress={enableEditableText} hidden>
+                                <Text style={styles.dialogButtonText}>Edit</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.deleteButton}>
+                                <Text style={styles.dialogButtonText}>Delete</Text>
+                            </TouchableOpacity>
+                        </View>
+                    }
+                    {
+                        !isTextDisabled &&
+                        <View style={{
+                            flex: 1,
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            paddingHorizontal: 16,
+                            marginTop: 20
+                        }}
+
+                        >
+                            <TouchableOpacity style={styles.editButton} onPress={closeViewDialog}>
+                                <Text style={styles.dialogButtonText}>Close</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.deleteButton} onPress={updateUser}>
+                                <Text style={styles.dialogButtonText}>Update</Text>
+                            </TouchableOpacity>
+                        </View>
+                    }
+
                 </View>
             </Dialog>
 
@@ -311,7 +350,6 @@ export default function Users() {
                         onChangeText={(email) => setEmail(email)}
                     />
                     <Text style={styles.detailsTag}>Type</Text>
-                    {type}
                     <Picker
                         selectedValue={type}
                         style={{height: 30, width: 200}}
@@ -328,7 +366,7 @@ export default function Users() {
                         paddingHorizontal: 16,
                         marginTop: 20
                     }}>
-                        <TouchableOpacity style={styles.editButton}>
+                        <TouchableOpacity style={styles.editButton} onPress={closeAddDialog}>
                             <Text style={styles.dialogButtonText}>Cancel</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.deleteButton} onPress={addUsers}>
