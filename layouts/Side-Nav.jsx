@@ -1,18 +1,20 @@
 import React from 'react';
 import {Entypo, Feather, FontAwesome5, MaterialCommunityIcons} from '@expo/vector-icons';
 import DrawerItems from "../constants/DrawerItem";
+import {createDrawerNavigator} from "@react-navigation/drawer";
+
 import ProfileScreen from "../screens/Profile";
 import SettingsScreen from "../screens/Settings";
 import SavedScreen from "../screens/Saved";
 import ReferScreen from "../screens/Refer";
-import {createDrawerNavigator} from "@react-navigation/drawer";
+import AdminDashboard from '../screens/admin/Dashboard'
 
 export default function Header({screen}){
     const Drawer = createDrawerNavigator();
     return(
         <Drawer.Navigator
             drawerType="front"
-            initialRouteName="Profile"
+            initialRouteName="Dashboard"
             screenOptions={{
                 activeTintColor: '#e91e63',
                 itemStyle: { marginVertical: 10 },
@@ -48,7 +50,7 @@ export default function Header({screen}){
                         headerShown:true,
                     }}
                     component={
-                        drawer.name==='Profile' ? ProfileScreen
+                        drawer.name==='Dashboard' ? AdminDashboard
                             : drawer.name==='Settings' ? SettingsScreen
                                 : drawer.name==='Saved Items' ? SavedScreen
                                     : ReferScreen

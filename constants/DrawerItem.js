@@ -1,8 +1,8 @@
 export default [
     {
-        name:'Profile',
+        name:'Dashboard',
         iconType:'Material',
-        // iconName:'face-profile'
+        iconName:'view-dashboard-outline'
     },
     {
         name:'Settings',
