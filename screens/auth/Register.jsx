@@ -6,7 +6,7 @@ import {
     StyleSheet,
 } from "react-native";
 import React, { useState } from "react";
-// import { firebase } from "../config";
+import { firebase } from "../../config";
 
 const Register = () => {
     const [email, setEmail] = useState("");

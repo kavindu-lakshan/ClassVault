@@ -1,12 +1,35 @@
-import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import SideNav from './layouts/Side-Nav'
-import Users from './screens/admin/Users/Users'
-import Dashboard from "./screens/admin/Dashboard";
-export default function App() {
-    return (
-        <NavigationContainer>
-            <SideNav/>
-        </NavigationContainer>
-    );
+import React, {useEffect, useState} from "react";
+import {NavigationContainer} from '@react-navigation/native';
+import {firebase} from "./config";
+
+import AuhRoutes from './routes/auth_routes'
+import Routes from './routes/route'
+
+function App() {
+
+    const [initializing, setInitializing] = useState(true);
+    const [user, setUser] = useState();
+
+    function onAuthStateChanged(user) {
+        setUser(user);
+        if (initializing) setInitializing(false);
+    }
+
+    useEffect(() => {
+        return firebase.auth().onAuthStateChanged(onAuthStateChanged);
+    }, []);
+
+    if (!user) {
+        return (<AuhRoutes/>)
+    } else {
+        return (<Routes/>)
+    }
+
+
+}
+
+export default () => {
+    return (<NavigationContainer>
+            <App/>
+        </NavigationContainer>);
 }

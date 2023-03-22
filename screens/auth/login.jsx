@@ -7,13 +7,15 @@ import {
   } from "react-native";
   import React, { useState } from "react";
   import { useNavigation } from "@react-navigation/native";
+import {firebase} from "../../config";
 //   import { firebase } from "../config";
-  
+
   const Login = () => {
     const navigation = useNavigation();
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-  
+
     const loginUser = async (email, password) => {
       try {
         await firebase.auth().signInWithEmailAndPassword(email, password);
@@ -35,9 +37,9 @@ import {
               underlineColorAndroid="transparent"
               autoCorrect={false}
             />
-  
+
           </View>
-  
+
           <View style={styles.formContainer}>
             <TextInput
               style={styles.input}
@@ -49,7 +51,7 @@ import {
               autoCapitalize="none"
               secureTextEntry={true}
             />
-  
+
           </View>
         </View>
         <TouchableOpacity
@@ -59,7 +61,7 @@ import {
           <Text style={{ fontWeight: "bold", fontSize: 22 }}>Login</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.navigate("Register")}
+          onPress={() => navigation.navigate("register")}
           style={{ marginTop: 20 }}
         >
           <Text style={{ fontWeight: "bold", fontSize: 16 }}>
@@ -69,9 +71,9 @@ import {
       </View>
     );
   };
-  
+
   export default Login;
-  
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -115,4 +117,3 @@ import {
       marginRight: 5,
     },
   });
-  
