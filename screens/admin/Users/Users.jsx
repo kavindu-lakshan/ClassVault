@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
+import {FlatList, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Picker} from "react-native";
 import {Searchbar} from 'react-native-paper';
 
 import {Dialog} from '@rneui/themed';
@@ -16,9 +16,10 @@ export default function Users() {
     const [currentUser, setCurrentUser] = useState("");
     const [users, setUsers] = useState([]);
     const [filterUsers, setFilter] = useState([]);
+    const [selectedUser, setSelectedUser] = useState({});
 
+    const [selectedType, setSelectedType] = useState("");
     const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
     const [firstname, setFirstname] = useState("");
     const [lastname, setLastname] = useState("");
 
@@ -38,7 +39,6 @@ export default function Users() {
                     item.email.toLowerCase().includes(search.toLowerCase())
             })
         )
-        console.log('ava')
     }, [search, users])
 
     const allUsers = async () => {
@@ -71,12 +71,14 @@ export default function Users() {
     }
 
     const addUsers = async () => {
+        console.log(selectedType)
         const timestamp = firebase.firestore.FieldValue.serverTimestamp();
         const data = {
             firstname: firstname,
             lastname: lastname,
             email: email,
             password: '11111111',
+            type:selectedType,
             timestamp: timestamp
         };
         await firebase
@@ -95,14 +97,21 @@ export default function Users() {
                 alert(error.message);
             });
         addNewUserDialogOpen()
+        await allUsers()
     }
 
-    const viewUserDialogOpen = () => {
+    const viewUserDialogOpen = (item) => {
+        console.log(item)
+        setSelectedUser(item)
         setViewUserDialogVisible(!viewUserDialogVisible);
     };
     const addNewUserDialogOpen = () => {
         setAddUserDialogVisible(!addUserDialogVisible)
     };
+
+    const ss = (aa)=>{
+       alert(aa)
+    }
 
 
     return (
@@ -135,25 +144,12 @@ export default function Users() {
                                 <Text style={styles.name}>Name : {item.firstname} {item.lastname}</Text>
                                 <Text style={styles.email}>Email: {item.email}</Text>
                             </View>
-                            <TouchableOpacity style={styles.viewMoreButton}>
+                            <TouchableOpacity style={styles.viewMoreButton} onPress={()=>{viewUserDialogOpen(item)}}>
                                 <Text style={styles.viewMoreButtonText}>View More</Text>
                             </TouchableOpacity>
                         </View>
                     )}
                 />
-
-                {/*<View style={styles.userDetailsCard}>*/}
-                {/*    <Image source={require('../../../assets/download.jpg')} style={styles.avatar}/>*/}
-                {/*    <View style={styles.detailsContainer}>*/}
-                {/*        <Text style={styles.name}>Name : Ishara</Text>*/}
-                {/*        <Text style={styles.email}>Email: Ishara@gmail.com</Text>*/}
-                {/*    </View>*/}
-                {/*    <TouchableOpacity style={styles.viewMoreButton} onPress={viewUserDialogOpen}>*/}
-                {/*        <Text style={styles.viewMoreButtonText}>View More</Text>*/}
-                {/*    </TouchableOpacity>*/}
-                {/*</View>*/}
-
-
             </ScrollView>
 
 
@@ -162,10 +158,9 @@ export default function Users() {
                 isVisible={viewUserDialogVisible}
                 onBackdropPress={viewUserDialogOpen}
             >
-
                 <View>
                     <Image source={require('../../../assets/download.jpg')} style={styles.avatarShow}/>
-                    <Text style={styles.detailsTag}>Name</Text>
+                    <Text style={styles.detailsTag}>First Name</Text>
                     <TextInput
                         style={styles.input}
                         placeholderTextColor="#aaaaaa"
@@ -174,6 +169,19 @@ export default function Users() {
                         placeholder="Ishara Madusanka"
                         autoCapitalize="none"
                         secureTextEntry={true}
+                        value={selectedUser.firstname}
+                    />
+                    <Text style={styles.detailsTag}>Last Name</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholderTextColor="#aaaaaa"
+                        disabled
+                        underlineColorAndroid="transparent"
+                        autoCorrect={false}
+                        placeholder="Ishara Madusanka"
+                        autoCapitalize="none"
+                        secureTextEntry={true}
+                        value={selectedUser.lastname}
                     />
                     <Text style={styles.detailsTag}>Email</Text>
                     <TextInput
@@ -184,6 +192,7 @@ export default function Users() {
                         placeholder="Ishara@gmail.com"
                         autoCapitalize="none"
                         secureTextEntry={true}
+                        value={selectedUser.email}
                     />
                     <View style={{
                         flex: 1,
@@ -208,7 +217,6 @@ export default function Users() {
                 isVisible={addUserDialogVisible}
                 // onBackdropPress={viewUserDialogOpen}
             >
-
                 <View>
                     <Image source={require('../../../assets/download.jpg')} style={styles.avatarShow}/>
                     <Text style={styles.detailsTag}>First Name</Text>
@@ -244,6 +252,16 @@ export default function Users() {
                         secureTextEntry={true}
                         onChangeText={(email) => setEmail(email)}
                     />
+                    <Text style={styles.detailsTag}>Type</Text>
+                    <Picker
+                        selectedValue={selectedType}
+                        style={{ height: 30, width: 200 }}
+                        onValueChange={(itemValue) => setSelectedType(itemValue)}
+                    >
+                        <Picker.Item label="none" value="Please select value" />
+                        <Picker.Item label="Teacher" value="teacher" />
+                        <Picker.Item label="Checker" value="checker" />
+                    </Picker>
                     <View style={{
                         flex: 1,
                         flexDirection: 'row',
