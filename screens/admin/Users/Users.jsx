@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, Image, Picker, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
+import {FlatList, Image, Picker, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert} from "react-native";
 import {Searchbar} from 'react-native-paper';
 
 import {Dialog} from '@rneui/themed';
@@ -76,6 +76,49 @@ export default function Users() {
         }
     }
 
+
+    const viewUserDialogOpen = (item) => {
+        setSelectedUser(item)
+        setSelectEmail(item.email)
+        setSelectFirstName(item.firstname)
+        setSelectType(item.type)
+        setSelectLastName(item.lastname)
+        setViewUserDialogVisible(!viewUserDialogVisible);
+    };
+    const addNewUserDialogOpen = () => {
+        setAddUserDialogVisible(!addUserDialogVisible)
+    };
+
+    const closeViewDialog = () => {
+        setIsTextDisabled(!isTextDisabled)
+        setViewUserDialogVisible(!viewUserDialogVisible);
+    }
+    const closeAddDialog = () => {
+        setAddUserDialogVisible(!addUserDialogVisible);
+    }
+
+    const enableEditableText = () => {
+        setIsTextDisabled(!isTextDisabled)
+    }
+
+    const refreshPage = async () => {
+        await allUsers()
+        filterUser()
+    }
+
+    const showConfirmDialog = () => {
+        Alert.alert(
+            'Alert Title',
+            'Alert message here...',
+            [
+                {text: 'Ask me later', onPress: () => console.warn('Ask me later pressed')},
+                {text: 'NO', onPress: () => console.warn('NO Pressed'), style: 'cancel'},
+                {text: 'YES', onPress: () => console.warn('YES Pressed')},
+            ]
+        );
+    };
+
+    //crud operations
     const getCurrentUser = () => {
         try {
             setCurrentUser(firebase.auth().currentUser.uid)
@@ -112,9 +155,7 @@ export default function Users() {
                     alert(error.message);
                 });
             addNewUserDialogOpen()
-            await allUsers()
-            filterUser()
-            setAddUserDialogVisible(false)
+            await refreshPage()
         } catch (e) {
 
         }
@@ -132,36 +173,25 @@ export default function Users() {
                 timestamp: timestamp
             };
             const result = await firebase.firestore().collection("users").doc(selectedUser.id).update(data)
-            await allUsers()
-            filterUser()
+            await refreshPage()
             setViewUserDialogVisible(false)
         } catch (e) {
 
         }
     }
 
-    const viewUserDialogOpen = (item) => {
-        setSelectedUser(item)
-        setSelectEmail(item.email)
-        setSelectFirstName(item.firstname)
-        setSelectType(item.type)
-        setSelectLastName(item.lastname)
-        setViewUserDialogVisible(!viewUserDialogVisible);
-    };
-    const addNewUserDialogOpen = () => {
-        setAddUserDialogVisible(!addUserDialogVisible)
-    };
-
-    const  closeViewDialog = ()=>{
-        setIsTextDisabled(!isTextDisabled)
-        setViewUserDialogVisible(!viewUserDialogVisible);
-    }
-    const  closeAddDialog = ()=>{
-        setAddUserDialogVisible(!addUserDialogVisible);
-    }
-
-    const enableEditableText = () => {
-        setIsTextDisabled(!isTextDisabled)
+    const deleteUser = async () => {
+        firebase.firestore().collection("users")
+            .doc(selectedUser.id)
+            .delete()
+            .then(() => {
+                alert("Successfully Deleted..!!");
+            })
+            .catch((error) => {
+                alert(error);
+            });
+        await refreshPage()
+        closeViewDialog()
     }
 
     return (
@@ -221,7 +251,6 @@ export default function Users() {
                         autoCorrect={false}
                         placeholder="Ishara Madusanka"
                         autoCapitalize="none"
-                        secureTextEntry={true}
                         value={selectFirstName}
                         onChangeText={(e) => {
                             setSelectFirstName(e)
@@ -236,7 +265,6 @@ export default function Users() {
                         autoCorrect={false}
                         placeholder="Ishara Madusanka"
                         autoCapitalize="none"
-                        secureTextEntry={true}
                         value={selectLastName}
                         onChangeText={(e) => {
                             setSelectLastName(e)
@@ -251,7 +279,6 @@ export default function Users() {
                         autoCorrect={false}
                         placeholder="Ishara@gmail.com"
                         autoCapitalize="none"
-                        secureTextEntry={true}
                         value={selectEmail}
                         onChangeText={(e) => {
                             setSelectEmail(e)
@@ -280,7 +307,7 @@ export default function Users() {
                             <TouchableOpacity style={styles.editButton} onPress={enableEditableText} hidden>
                                 <Text style={styles.dialogButtonText}>Edit</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.deleteButton}>
+                            <TouchableOpacity style={styles.deleteButton} onPress={showConfirmDialog}>
                                 <Text style={styles.dialogButtonText}>Delete</Text>
                             </TouchableOpacity>
                         </View>
@@ -324,7 +351,6 @@ export default function Users() {
                         autoCorrect={false}
                         placeholder="Enter First Name"
                         autoCapitalize="none"
-                        secureTextEntry={true}
                         onChangeText={(fName) => setFirstname(fName)}
                     />
                     <Text style={styles.detailsTag}>Last Name</Text>
@@ -335,7 +361,6 @@ export default function Users() {
                         autoCorrect={false}
                         placeholder="Enter Last Name"
                         autoCapitalize="none"
-                        secureTextEntry={true}
                         onChangeText={(lName) => setLastname(lName)}
                     />
                     <Text style={styles.detailsTag}>Email</Text>
@@ -346,7 +371,6 @@ export default function Users() {
                         autoCorrect={false}
                         placeholder="Enter Email"
                         autoCapitalize="none"
-                        secureTextEntry={true}
                         onChangeText={(email) => setEmail(email)}
                     />
                     <Text style={styles.detailsTag}>Type</Text>
