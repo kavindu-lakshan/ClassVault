@@ -1,18 +1,30 @@
 import React, {useState} from 'react';
-import {View, StyleSheet} from "react-native";
-import {DataTable} from 'react-native-paper';
+import {ScrollView, StyleSheet, Text, View} from "react-native";
+import {Button, Searchbar} from 'react-native-paper';
 import SelectDropdown from 'react-native-select-dropdown'
-import { SearchBar } from '@rneui/themed';
-import { Searchbar } from 'react-native-paper';
 
+import {Card, Dialog} from '@rneui/themed';
+
+import Animated, {
+    useAnimatedStyle,
+    withTiming,
+} from 'react-native-reanimated';
 
 export default function Users() {
     const countries = ["Egypt", "Canada", "Australia", "Ireland"]
+    const [visible1, setVisible1] = useState(false);
 
     const [search, setSearch] = useState("");
     const updateSearch = (search) => {
         setSearch(search);
     };
+
+    const toggleDialog1 = () => {
+        setVisible1(!visible1);
+    };
+
+
+
     return (
         <View style={{flex: 1}}>
             <SelectDropdown
@@ -33,6 +45,7 @@ export default function Users() {
                 }}
 
             />
+
             <View style={styles.view}>
                 <Searchbar
                     placeholder="Search"
@@ -41,62 +54,109 @@ export default function Users() {
                 />
             </View>
 
-            <DataTable>
-                <DataTable.Header>
-                    <DataTable.Title>Name</DataTable.Title>
-                    <DataTable.Title>Email</DataTable.Title>
-                    <DataTable.Title numeric>Age</DataTable.Title>
-                    <DataTable.Title numeric>Actions</DataTable.Title>
-                </DataTable.Header>
-                <DataTable.Row>
-                    <DataTable.Cell>John</DataTable.Cell>
-                    <DataTable.Cell>john@kindacode.com</DataTable.Cell>
-                    <DataTable.Cell numeric>25</DataTable.Cell>
-                    <DataTable.Cell numeric>more</DataTable.Cell>
-                </DataTable.Row>
-                <DataTable.Row>
-                    <DataTable.Cell>Bob</DataTable.Cell>
-                    <DataTable.Cell>test@test.com</DataTable.Cell>
-                    <DataTable.Cell numeric>25</DataTable.Cell>
-                    <DataTable.Cell numeric>more</DataTable.Cell>
-                </DataTable.Row>
-            </DataTable>
+            <ScrollView>
+                <Card containerStyle={{marginTop: 15}}>
+                    <Dialog.Title title="Dialog Title"/>
+                    <Card.Divider/>
+                    <Text h1>
+                        h1 Heading
+                    </Text>
+                    <Text h2>
+                        h2 Heading
+                    </Text>
+                    <Text h3>
+                        h3 Heading
+                    </Text>
+                    <Text h4>
+                        h4 Heading
+                    </Text>
+                    <Text>Normal Text</Text>
+                </Card>
+
+                <Card containerStyle={{marginTop: 15}}>
+                    <Dialog.Title title="Dialog Title"/>
+                    <Button icon="camera" onPress={toggleDialog1}>
+                        Press me
+                    </Button>
+                    <Card.Divider/>
+                    <Text h1>
+                        h1 Heading
+                    </Text>
+                    <Text h2>
+                        h2 Heading
+                    </Text>
+                    <Text h3>
+                        h3 Heading
+                    </Text>
+                    <Text h4>
+                        h4 Heading
+                    </Text>
+                    <Text>Normal Text</Text>
+                </Card>
+                <Card containerStyle={{marginTop: 15}}>
+                    <Dialog.Title title="Dialog Title"/>
+                    <Button icon="camera" onPress={toggleDialog1}>
+                        Press me
+                    </Button>
+                    <Card.Divider/>
+                    <Text h1>
+                        h1 Heading
+                    </Text>
+                    <Text h2>
+                        h2 Heading
+                    </Text>
+                    <Text h3>
+                        h3 Heading
+                    </Text>
+                    <Text h4>
+                        h4 Heading
+                    </Text>
+                    <Text>Normal Text</Text>
+                </Card>
+            </ScrollView>
+
+
+            <Dialog
+                isVisible={visible1}
+                onBackdropPress={toggleDialog1}
+            >
+
+                <Card containerStyle={{ marginTop: 15 }}>
+
+                    <Button icon="camera" onPress={toggleDialog1}>
+                        Press me
+                    </Button>
+
+                    <Card.Divider />
+                    <Text h1>
+                        h1 Heading
+                    </Text>
+                    <Text h2>
+                        h2 Heading
+                    </Text>
+                    <Text h3>
+                        h3 Heading
+                    </Text>
+                    <Text h4>
+                        h4 Heading
+                    </Text>
+                    <Text>Normal Text</Text>
+                </Card>
+            </Dialog>
+
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container : {
-        flex            : 1,
-        backgroundColor : "#fff",
-        alignItems      : "center",
-        justifyContent  : "center",
+    container: {
+        flex: 1,
+        backgroundColor: "#fff",
+        alignItems: "center",
+        justifyContent: "center",
     },
     view: {
         margin: 10,
     },
 });
 
-const pickerSelectStyles = StyleSheet.create({
-    inputIOS: {
-        marginTop:'30px',
-        fontSize: 16,
-        paddingVertical: 12,
-        paddingHorizontal: 10,
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 4,
-        color: 'black',
-        paddingRight: 30 // to ensure the text is never behind the icon
-    },
-    inputAndroid: {
-        fontSize: 16,
-        paddingHorizontal: 10,
-        paddingVertical: 8,
-        borderWidth: 0.5,
-        borderColor: 'purple',
-        borderRadius: 8,
-        color: 'black',
-        paddingRight: 30 // to ensure the text is never behind the icon
-    }
-});
