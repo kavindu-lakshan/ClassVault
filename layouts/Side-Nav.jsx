@@ -2,16 +2,31 @@ import React from 'react';
 import {Entypo, Feather, FontAwesome5, MaterialCommunityIcons} from '@expo/vector-icons';
 import DrawerItems from "../constants/DrawerItem";
 import {createDrawerNavigator} from "@react-navigation/drawer";
+import {firebase} from "../config";
 
-import ProfileScreen from "../screens/Profile";
-import SettingsScreen from "../screens/Settings";
 import SavedScreen from "../screens/Saved";
 import ReferScreen from "../screens/Refer";
 import AdminDashboard from '../screens/admin/Dashboard'
 import Users from '../screens/admin/Users/Users'
+import {useNavigation} from "@react-navigation/native";
 
 export default function Header({screen}){
+
     const Drawer = createDrawerNavigator();
+    const navigation = useNavigation();
+
+    const logout = async()=>{
+        try{
+            firebase()
+                .signOut()
+                .then(() => console.log('User signed out!'));
+
+        }catch (e) {
+            console.log(e)
+        }
+        navigation.navigate("login")
+
+    }
     return(
         <Drawer.Navigator
             drawerType="front"
@@ -53,7 +68,7 @@ export default function Header({screen}){
                     component={
                         drawer.name==='Dashboard' ? AdminDashboard
                             : drawer.name==='Users' ? Users
-                                : drawer.name==='Saved Items' ? SavedScreen
+                                : drawer.name==='Saved Items' ? logout
                                     : ReferScreen
                     }
                 />)
