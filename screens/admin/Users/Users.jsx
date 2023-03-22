@@ -1,10 +1,21 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, Image, Picker, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert} from "react-native";
+import {
+    ActivityIndicator,
+    Alert,
+    FlatList,
+    Image,
+    Picker,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from "react-native";
 import {Searchbar} from 'react-native-paper';
 
 import {Dialog} from '@rneui/themed';
 import {firebase} from "../../../config";
-
 
 export default function Users() {
 
@@ -29,6 +40,7 @@ export default function Users() {
     const [selectLastName, setSelectLastName] = useState("");
 
     const [isTextDisabled, setIsTextDisabled] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         getCurrentUser()
@@ -52,6 +64,7 @@ export default function Users() {
         )
         let uniqueObjArray = [...new Map(data.map((item) => [item["email"], item])).values()];
         setFilter(uniqueObjArray)
+        setIsLoading(false)
 
     }
 
@@ -130,6 +143,7 @@ export default function Users() {
 
     const addUsers = async () => {
         try {
+            setIsLoading(true)
             const timestamp = firebase.firestore.FieldValue.serverTimestamp();
             const data = {
                 firstname: firstname,
@@ -163,6 +177,7 @@ export default function Users() {
 
     const updateUser = async () => {
         try {
+            setIsLoading(true)
             const timestamp = firebase.firestore.FieldValue.serverTimestamp();
             const data = {
                 firstname: selectFirstName,
@@ -181,6 +196,7 @@ export default function Users() {
     }
 
     const deleteUser = async () => {
+        setIsLoading(true)
         firebase.firestore().collection("users")
             .doc(selectedUser.id)
             .delete()
@@ -195,210 +211,220 @@ export default function Users() {
     }
 
     return (
-        <View style={{flex: 1}}>
-            <View style={styles.searchingBar}>
-                <View style={styles.view}>
-                    <Searchbar
-                        placeholder="Search"
-                        onChangeText={(search) => {
-                            setSearch(search)
-                        }}
+        <View>
+            {
+                isLoading ?  <View style={{flex: 5, marginTop:'10%'}}>
+                    <ActivityIndicator size="large" color="#00ff00"/>
+                </View> : <View style={{flex: 1}}>
 
-                    />
-                </View>
-                <View style={styles.view}>
-                    <TouchableOpacity style={styles.addBtn} onPress={addNewUserDialogOpen}>
-                        <Text style={styles.viewMoreButtonText}>ADD</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
 
-            <ScrollView>
-                <FlatList
-                    data={filterUsers}
-                    numColumns={1}
-                    renderItem={({item}) => (
-                        <View style={styles.userDetailsCard}>
-                            <Image source={require('../../../assets/download.jpg')} style={styles.avatar}/>
-                            <View style={styles.detailsContainer}>
-                                <Text style={styles.name}>Name : {item.firstname} {item.lastname}</Text>
-                                <Text style={styles.email}>Email: {item.email}</Text>
-                            </View>
-                            <TouchableOpacity style={styles.viewMoreButton} onPress={() => {
-                                viewUserDialogOpen(item)
-                            }}>
-                                <Text style={styles.viewMoreButtonText}>View More</Text>
+                    <View style={styles.searchingBar}>
+                        <View style={styles.view}>
+                            <Searchbar
+                                placeholder="Search"
+                                onChangeText={(search) => {
+                                    setSearch(search)
+                                }}
+
+                            />
+                        </View>
+                        <View style={styles.view}>
+                            <TouchableOpacity style={styles.addBtn} onPress={addNewUserDialogOpen}>
+                                <Text style={styles.viewMoreButtonText}>ADD</Text>
                             </TouchableOpacity>
                         </View>
-                    )}
-                />
-            </ScrollView>
-
-
-            {/*View Single User*/}
-            <Dialog
-                isVisible={viewUserDialogVisible}
-                onBackdropPress={viewUserDialogOpen}
-            >
-                <View>
-                    <Image source={require('../../../assets/download.jpg')} style={styles.avatarShow}/>
-                    <Text style={styles.detailsTag}>First Name</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholderTextColor="#aaaaaa"
-                        underlineColorAndroid="transparent"
-                        disabled={isTextDisabled}
-                        autoCorrect={false}
-                        placeholder="Ishara Madusanka"
-                        autoCapitalize="none"
-                        value={selectFirstName}
-                        onChangeText={(e) => {
-                            setSelectFirstName(e)
-                        }}
-                    />
-                    <Text style={styles.detailsTag}>Last Name</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholderTextColor="#aaaaaa"
-                        disabled={isTextDisabled}
-                        underlineColorAndroid="transparent"
-                        autoCorrect={false}
-                        placeholder="Ishara Madusanka"
-                        autoCapitalize="none"
-                        value={selectLastName}
-                        onChangeText={(e) => {
-                            setSelectLastName(e)
-                        }}
-                    />
-                    <Text style={styles.detailsTag}>Email</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholderTextColor="#aaaaaa"
-                        underlineColorAndroid="transparent"
-                        disabled={isTextDisabled}
-                        autoCorrect={false}
-                        placeholder="Ishara@gmail.com"
-                        autoCapitalize="none"
-                        value={selectEmail}
-                        onChangeText={(e) => {
-                            setSelectEmail(e)
-                        }}
-                    />
-                    <Text style={styles.detailsTag}>Type</Text>
-                    <Picker
-                        selectedValue={selectType}
-                        style={{height: 30, width: 200}}
-                        onValueChange={(itemValue) => setSelectType(itemValue)}
-                    >
-                        <Picker.Item label="none" value="Please select value"/>
-                        <Picker.Item label="Teacher" value="teacher"/>
-                        <Picker.Item label="Checker" value="checker"/>
-                    </Picker>
-                    {
-                        isTextDisabled && <View style={{
-                            flex: 1,
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            paddingHorizontal: 16,
-                            marginTop: 20
-                        }}
-
-                        >
-                            <TouchableOpacity style={styles.editButton} onPress={enableEditableText} hidden>
-                                <Text style={styles.dialogButtonText}>Edit</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.deleteButton} onPress={showConfirmDialog}>
-                                <Text style={styles.dialogButtonText}>Delete</Text>
-                            </TouchableOpacity>
-                        </View>
-                    }
-                    {
-                        !isTextDisabled &&
-                        <View style={{
-                            flex: 1,
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            paddingHorizontal: 16,
-                            marginTop: 20
-                        }}
-
-                        >
-                            <TouchableOpacity style={styles.editButton} onPress={closeViewDialog}>
-                                <Text style={styles.dialogButtonText}>Close</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.deleteButton} onPress={updateUser}>
-                                <Text style={styles.dialogButtonText}>Update</Text>
-                            </TouchableOpacity>
-                        </View>
-                    }
-
-                </View>
-            </Dialog>
-
-
-            {/*add new user*/}
-            <Dialog
-                isVisible={addUserDialogVisible}
-                // onBackdropPress={viewUserDialogOpen}
-            >
-                <View>
-                    <Image source={require('../../../assets/download.jpg')} style={styles.avatarShow}/>
-                    <Text style={styles.detailsTag}>First Name</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholderTextColor="#aaaaaa"
-                        underlineColorAndroid="transparent"
-                        autoCorrect={false}
-                        placeholder="Enter First Name"
-                        autoCapitalize="none"
-                        onChangeText={(fName) => setFirstname(fName)}
-                    />
-                    <Text style={styles.detailsTag}>Last Name</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholderTextColor="#aaaaaa"
-                        underlineColorAndroid="transparent"
-                        autoCorrect={false}
-                        placeholder="Enter Last Name"
-                        autoCapitalize="none"
-                        onChangeText={(lName) => setLastname(lName)}
-                    />
-                    <Text style={styles.detailsTag}>Email</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholderTextColor="#aaaaaa"
-                        underlineColorAndroid="transparent"
-                        autoCorrect={false}
-                        placeholder="Enter Email"
-                        autoCapitalize="none"
-                        onChangeText={(email) => setEmail(email)}
-                    />
-                    <Text style={styles.detailsTag}>Type</Text>
-                    <Picker
-                        selectedValue={type}
-                        style={{height: 30, width: 200}}
-                        onValueChange={(itemValue) => setType(itemValue)}
-                    >
-                        <Picker.Item label="none" value="Please select value"/>
-                        <Picker.Item label="Teacher" value="teacher"/>
-                        <Picker.Item label="Checker" value="checker"/>
-                    </Picker>
-                    <View style={{
-                        flex: 1,
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        paddingHorizontal: 16,
-                        marginTop: 20
-                    }}>
-                        <TouchableOpacity style={styles.editButton} onPress={closeAddDialog}>
-                            <Text style={styles.dialogButtonText}>Cancel</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.deleteButton} onPress={addUsers}>
-                            <Text style={styles.dialogButtonText}>Add</Text>
-                        </TouchableOpacity>
                     </View>
+
+                    <ScrollView>
+                        <FlatList
+                            data={filterUsers}
+                            numColumns={1}
+                            renderItem={({item}) => (
+                                <View style={styles.userDetailsCard}>
+                                    <Image source={require('../../../assets/download.jpg')} style={styles.avatar}/>
+                                    <View style={styles.detailsContainer}>
+                                        <Text style={styles.name}>Name : {item.firstname} {item.lastname}</Text>
+                                        <Text style={styles.email}>Email: {item.email}</Text>
+                                    </View>
+                                    <TouchableOpacity style={styles.viewMoreButton} onPress={() => {
+                                        viewUserDialogOpen(item)
+                                    }}>
+                                        <Text style={styles.viewMoreButtonText}>View More</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                        />
+                    </ScrollView>
+
+
+                    {/*View Single User*/}
+                    <Dialog
+                        isVisible={viewUserDialogVisible}
+                        onBackdropPress={viewUserDialogOpen}
+                    >
+                        <View>
+                            <Image source={require('../../../assets/download.jpg')} style={styles.avatarShow}/>
+                            <Text style={styles.detailsTag}>First Name</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholderTextColor="#aaaaaa"
+                                underlineColorAndroid="transparent"
+                                disabled={isTextDisabled}
+                                autoCorrect={false}
+                                placeholder="Ishara Madusanka"
+                                autoCapitalize="none"
+                                value={selectFirstName}
+                                onChangeText={(e) => {
+                                    setSelectFirstName(e)
+                                }}
+                            />
+                            <Text style={styles.detailsTag}>Last Name</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholderTextColor="#aaaaaa"
+                                disabled={isTextDisabled}
+                                underlineColorAndroid="transparent"
+                                autoCorrect={false}
+                                placeholder="Ishara Madusanka"
+                                autoCapitalize="none"
+                                value={selectLastName}
+                                onChangeText={(e) => {
+                                    setSelectLastName(e)
+                                }}
+                            />
+                            <Text style={styles.detailsTag}>Email</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholderTextColor="#aaaaaa"
+                                underlineColorAndroid="transparent"
+                                disabled={isTextDisabled}
+                                autoCorrect={false}
+                                placeholder="Ishara@gmail.com"
+                                autoCapitalize="none"
+                                value={selectEmail}
+                                onChangeText={(e) => {
+                                    setSelectEmail(e)
+                                }}
+                            />
+                            <Text style={styles.detailsTag}>Type</Text>
+                            <Picker
+                                selectedValue={selectType}
+                                style={{height: 30, width: 200}}
+                                onValueChange={(itemValue) => setSelectType(itemValue)}
+                            >
+                                <Picker.Item label="none" value="Please select value"/>
+                                <Picker.Item label="Teacher" value="teacher"/>
+                                <Picker.Item label="Checker" value="checker"/>
+                            </Picker>
+                            {
+                                isTextDisabled && <View style={{
+                                    flex: 1,
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    paddingHorizontal: 16,
+                                    marginTop: 20
+                                }}
+
+                                >
+                                    <TouchableOpacity style={styles.editButton} onPress={enableEditableText} hidden>
+                                        <Text style={styles.dialogButtonText}>Edit</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.deleteButton} onPress={showConfirmDialog}>
+                                        <Text style={styles.dialogButtonText}>Delete</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            }
+                            {
+                                !isTextDisabled &&
+                                <View style={{
+                                    flex: 1,
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    paddingHorizontal: 16,
+                                    marginTop: 20
+                                }}
+
+                                >
+                                    <TouchableOpacity style={styles.editButton} onPress={closeViewDialog}>
+                                        <Text style={styles.dialogButtonText}>Close</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.deleteButton} onPress={updateUser}>
+                                        <Text style={styles.dialogButtonText}>Update</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            }
+
+                        </View>
+                    </Dialog>
+
+
+                    {/*add new user*/}
+                    <Dialog
+                        isVisible={addUserDialogVisible}
+                        // onBackdropPress={viewUserDialogOpen}
+                    >
+                        <View>
+                            <Image source={require('../../../assets/download.jpg')} style={styles.avatarShow}/>
+                            <Text style={styles.detailsTag}>First Name</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholderTextColor="#aaaaaa"
+                                underlineColorAndroid="transparent"
+                                autoCorrect={false}
+                                placeholder="Enter First Name"
+                                autoCapitalize="none"
+                                onChangeText={(fName) => setFirstname(fName)}
+                            />
+                            <Text style={styles.detailsTag}>Last Name</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholderTextColor="#aaaaaa"
+                                underlineColorAndroid="transparent"
+                                autoCorrect={false}
+                                placeholder="Enter Last Name"
+                                autoCapitalize="none"
+                                onChangeText={(lName) => setLastname(lName)}
+                            />
+                            <Text style={styles.detailsTag}>Email</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholderTextColor="#aaaaaa"
+                                underlineColorAndroid="transparent"
+                                autoCorrect={false}
+                                placeholder="Enter Email"
+                                autoCapitalize="none"
+                                onChangeText={(email) => setEmail(email)}
+                            />
+                            <Text style={styles.detailsTag}>Type</Text>
+                            <Picker
+                                selectedValue={type}
+                                style={{height: 30, width: 200}}
+                                onValueChange={(itemValue) => setType(itemValue)}
+                            >
+                                <Picker.Item label="none" value="Please select value"/>
+                                <Picker.Item label="Teacher" value="teacher"/>
+                                <Picker.Item label="Checker" value="checker"/>
+                            </Picker>
+                            <View style={{
+                                flex: 1,
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                paddingHorizontal: 16,
+                                marginTop: 20
+                            }}>
+                                <TouchableOpacity style={styles.editButton} onPress={closeAddDialog}>
+                                    <Text style={styles.dialogButtonText}>Cancel</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.deleteButton} onPress={addUsers}>
+                                    <Text style={styles.dialogButtonText}>Add</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </Dialog>
                 </View>
-            </Dialog>
+            }
+
+
         </View>
     );
 }
@@ -421,6 +447,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+    },
+    lottie: {
+        width: 100,
+        height: 100,
     },
     detailsContainer: {
         flex: 1,
