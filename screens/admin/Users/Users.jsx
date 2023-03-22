@@ -1,95 +1,170 @@
-import React, {useState} from 'react';
-import {ScrollView, StyleSheet, View, Text, TouchableOpacity, Image, TextInput} from "react-native";
-import {Button, Searchbar} from 'react-native-paper';
-import SelectDropdown from 'react-native-select-dropdown'
+import React, {useEffect, useState} from 'react';
+import {FlatList, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
+import {Searchbar} from 'react-native-paper';
 
-import {Card, Dialog} from '@rneui/themed';
+import {Dialog} from '@rneui/themed';
+import {firebase} from "../../../config";
 
-import Animated, {
-    useAnimatedStyle,
-    withTiming,
-} from 'react-native-reanimated';
 
 export default function Users() {
-    const countries = ["Egypt", "Canada", "Australia", "Ireland"]
-    const [visible1, setVisible1] = useState(false);
+
+
+    const [viewUserDialogVisible, setViewUserDialogVisible] = useState(false);
+    const [addUserDialogVisible, setAddUserDialogVisible] = useState(false);
 
     const [search, setSearch] = useState("");
-    const updateSearch = (search) => {
-        setSearch(search);
-    };
+    const [currentUser, setCurrentUser] = useState("");
+    const [users, setUsers] = useState([]);
+    const [filterUsers, setFilter] = useState([]);
 
-    const toggleDialog1 = () => {
-        setVisible1(!visible1);
-    };
-    const toggleDialog2 = () => {
-        alert("Hehe hari bn");
-    };
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [firstname, setFirstname] = useState("");
+    const [lastname, setLastname] = useState("");
 
+    useEffect(() => {
+        getCurrentUser()
+    })
+
+    useEffect(async () => {
+        await allUsers()
+    }, [])
+
+    useEffect(() => {
+        setFilter(
+            users.filter(item => {
+                return item.firstname.toLowerCase().includes(search.toLowerCase()) ||
+                    item.lastname.toLowerCase().includes(search.toLowerCase()) ||
+                    item.email.toLowerCase().includes(search.toLowerCase())
+            })
+        )
+        console.log('ava')
+    }, [search, users])
+
+    const allUsers = async () => {
+        try {
+            const user = [];
+            firebase.firestore().collection("users").onSnapshot((snapshot) => {
+                snapshot.forEach((doc) => {
+                    const {firstname, lastname, email} = doc.data()
+                    user.push({
+                        id: doc.id,
+                        firstname,
+                        lastname,
+                        email
+                    })
+                    setUsers(user)
+                })
+            })
+        } catch (e) {
+
+        }
+    }
+
+    const getCurrentUser = () => {
+        try {
+            setCurrentUser(firebase.auth().currentUser.uid)
+        } catch (e) {
+
+        }
+
+    }
+
+    const addUsers = async () => {
+        const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+        const data = {
+            firstname: firstname,
+            lastname: lastname,
+            email: email,
+            password: '11111111',
+            timestamp: timestamp
+        };
+        await firebase
+            .auth()
+            .createUserWithEmailAndPassword(data.email, data.password)
+            .then((e) => {
+                console.log(e)
+                firebase
+                    .firestore()
+                    .collection("users")
+                    .doc(e.uid)
+                    .set(data);
+
+            })
+            .catch((error) => {
+                alert(error.message);
+            });
+        addNewUserDialogOpen()
+    }
+
+    const viewUserDialogOpen = () => {
+        setViewUserDialogVisible(!viewUserDialogVisible);
+    };
+    const addNewUserDialogOpen = () => {
+        setAddUserDialogVisible(!addUserDialogVisible)
+    };
 
 
     return (
         <View style={{flex: 1}}>
-            <SelectDropdown
-                data={countries}
-                string="black"
-                onSelect={(selectedItem, index) => {
-                    console.log(selectedItem, index)
-                }}
-                buttonTextAfterSelection={(selectedItem, index) => {
-                    // text represented after item is selected
-                    // if data array is an array of objects then return selectedItem.property to render after item is selected
-                    return selectedItem
-                }}
-                rowTextForSelection={(item, index) => {
-                    // text represented for each item in dropdown
-                    // if data array is an array of objects then return item.property to represent item in dropdown
-                    return item
-                }}
+            <View style={styles.searchingBar}>
+                <View style={styles.view}>
+                    <Searchbar
+                        placeholder="Search"
+                        onChangeText={(search) => {
+                            setSearch(search)
+                        }}
 
-            />
-
-            <View style={styles.view}>
-                <Searchbar
-                    placeholder="Search"
-                    onChangeText={updateSearch}
-                    value={search}
-                />
+                    />
+                </View>
+                <View style={styles.view}>
+                    <TouchableOpacity style={styles.addBtn} onPress={addNewUserDialogOpen}>
+                        <Text style={styles.viewMoreButtonText}>ADD</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
 
             <ScrollView>
-                <View style={styles.userDetailsCard}>
-                    <Image source={require('../../../assets/download.jpg')} style={styles.avatar} />
-                    <View style={styles.detailsContainer}>
-                        <Text style={styles.name}>Name : Ishara</Text>
-                        <Text style={styles.email}>Email: Ishara@gmail.com</Text>
-                    </View>
-                    <TouchableOpacity style={styles.viewMoreButton}>
-                        <Text style={styles.viewMoreButtonText}>View More</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.userDetailsCard}>
-                    <Image source={require('../../../assets/download.jpg')} style={styles.avatar} />
-                    <View style={styles.detailsContainer}>
-                        <Text style={styles.name}>Name : Ishara</Text>
-                        <Text style={styles.email}>Email: Ishara@gmail.com</Text>
-                    </View>
-                    <TouchableOpacity style={styles.viewMoreButton} onPress={toggleDialog1} >
-                        <Text style={styles.viewMoreButtonText}>View More</Text>
-                    </TouchableOpacity>
-                </View>
+                <FlatList
+                    data={filterUsers}
+                    numColumns={1}
+                    renderItem={({item}) => (
+                        <View style={styles.userDetailsCard}>
+                            <Image source={require('../../../assets/download.jpg')} style={styles.avatar}/>
+                            <View style={styles.detailsContainer}>
+                                <Text style={styles.name}>Name : {item.firstname} {item.lastname}</Text>
+                                <Text style={styles.email}>Email: {item.email}</Text>
+                            </View>
+                            <TouchableOpacity style={styles.viewMoreButton}>
+                                <Text style={styles.viewMoreButtonText}>View More</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+                />
+
+                {/*<View style={styles.userDetailsCard}>*/}
+                {/*    <Image source={require('../../../assets/download.jpg')} style={styles.avatar}/>*/}
+                {/*    <View style={styles.detailsContainer}>*/}
+                {/*        <Text style={styles.name}>Name : Ishara</Text>*/}
+                {/*        <Text style={styles.email}>Email: Ishara@gmail.com</Text>*/}
+                {/*    </View>*/}
+                {/*    <TouchableOpacity style={styles.viewMoreButton} onPress={viewUserDialogOpen}>*/}
+                {/*        <Text style={styles.viewMoreButtonText}>View More</Text>*/}
+                {/*    </TouchableOpacity>*/}
+                {/*</View>*/}
 
 
             </ScrollView>
 
 
+            {/*View Single User*/}
             <Dialog
-                isVisible={visible1}
-                onBackdropPress={toggleDialog1}
+                isVisible={viewUserDialogVisible}
+                onBackdropPress={viewUserDialogOpen}
             >
 
                 <View>
-                    <Image source={require('../../../assets/download.jpg')} style={styles.avatarShow} />
+                    <Image source={require('../../../assets/download.jpg')} style={styles.avatarShow}/>
                     <Text style={styles.detailsTag}>Name</Text>
                     <TextInput
                         style={styles.input}
@@ -100,27 +175,91 @@ export default function Users() {
                         autoCapitalize="none"
                         secureTextEntry={true}
                     />
-                   <Text style={styles.detailsTag}>Email</Text>
+                    <Text style={styles.detailsTag}>Email</Text>
                     <TextInput
-                    style={styles.input}
-                    placeholderTextColor="#aaaaaa"
-                    underlineColorAndroid="transparent"
-                    autoCorrect={false}
-                    placeholder="Ishara@gmail.com"
-                    autoCapitalize="none"
-                    secureTextEntry={true}
-                />
-                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16 ,marginTop:20}}>
-                    <TouchableOpacity style={styles.editButton} onPress={toggleDialog2} >
-                        <Text style={styles.dialogButtonText}>Edit</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.deleteButton} onPress={toggleDialog2} >
-                        <Text style={styles.dialogButtonText} >Delete</Text>
-                    </TouchableOpacity>
+                        style={styles.input}
+                        placeholderTextColor="#aaaaaa"
+                        underlineColorAndroid="transparent"
+                        autoCorrect={false}
+                        placeholder="Ishara@gmail.com"
+                        autoCapitalize="none"
+                        secureTextEntry={true}
+                    />
+                    <View style={{
+                        flex: 1,
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        paddingHorizontal: 16,
+                        marginTop: 20
+                    }}>
+                        <TouchableOpacity style={styles.editButton}>
+                            <Text style={styles.dialogButtonText}>Edit</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.deleteButton}>
+                            <Text style={styles.dialogButtonText}>Delete</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Dialog>
 
+
+            {/*add new user*/}
+            <Dialog
+                isVisible={addUserDialogVisible}
+                // onBackdropPress={viewUserDialogOpen}
+            >
+
+                <View>
+                    <Image source={require('../../../assets/download.jpg')} style={styles.avatarShow}/>
+                    <Text style={styles.detailsTag}>First Name</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholderTextColor="#aaaaaa"
+                        underlineColorAndroid="transparent"
+                        autoCorrect={false}
+                        placeholder="Enter First Name"
+                        autoCapitalize="none"
+                        secureTextEntry={true}
+                        onChangeText={(fName) => setFirstname(fName)}
+                    />
+                    <Text style={styles.detailsTag}>Last Name</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholderTextColor="#aaaaaa"
+                        underlineColorAndroid="transparent"
+                        autoCorrect={false}
+                        placeholder="Enter Last Name"
+                        autoCapitalize="none"
+                        secureTextEntry={true}
+                        onChangeText={(lName) => setLastname(lName)}
+                    />
+                    <Text style={styles.detailsTag}>Email</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholderTextColor="#aaaaaa"
+                        underlineColorAndroid="transparent"
+                        autoCorrect={false}
+                        placeholder="Enter Email"
+                        autoCapitalize="none"
+                        secureTextEntry={true}
+                        onChangeText={(email) => setEmail(email)}
+                    />
+                    <View style={{
+                        flex: 1,
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        paddingHorizontal: 16,
+                        marginTop: 20
+                    }}>
+                        <TouchableOpacity style={styles.editButton}>
+                            <Text style={styles.dialogButtonText}>Cancel</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.deleteButton} onPress={addUsers}>
+                            <Text style={styles.dialogButtonText}>Add</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Dialog>
         </View>
     );
 }
@@ -176,38 +315,50 @@ const styles = StyleSheet.create({
         paddingLeft: 16,
         flex: 1,
         marginRight: 5,
-        marginTop:20
+        marginTop: 20
     },
-    detailsTag:{
-        marginTop:20,
+    detailsTag: {
+        marginTop: 20,
         fontWeight: 'bold',
     },
-    avatarShow:{
+    avatarShow: {
         width: 50,
         height: 50,
         borderRadius: 25,
         marginLeft: 'auto',
         marginRight: 'auto'
     },
-    editButton :{
+    editButton: {
         backgroundColor: 'blue',
         paddingVertical: 12,
         paddingHorizontal: 16,
-        paddingTop:0,
+        paddingTop: 0,
         borderRadius: 8
     },
-    dialogButtonText:{
+    dialogButtonText: {
         color: 'white',
         fontWeight: 'bold'
     },
-    deleteButton:{
+    deleteButton: {
         backgroundColor: 'red',
         paddingVertical: 16,
         paddingHorizontal: 16,
-        paddingTop:0,
+        paddingTop: 0,
         borderRadius: 8
-    }
+    },
+    searchingBar: {
+        marginTop: '10px',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: 10
+    },
 
+    addBtn: {
+        backgroundColor: 'blue',
+        padding: 10,
+        borderRadius: 5,
+    }
 
 });
 

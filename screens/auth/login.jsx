@@ -1,14 +1,15 @@
 import {
-    View,
-    Text,
-    TouchableOpacity,
-    TextInput,
-    StyleSheet,
-  } from "react-native";
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  StyleSheet, Alert,
+} from "react-native";
   import React, { useState } from "react";
   import { useNavigation } from "@react-navigation/native";
 import {firebase} from "../../config";
-//   import { firebase } from "../config";
+import AwesomeAlert from 'react-native-awesome-alerts';
+
 
   const Login = () => {
     const navigation = useNavigation();
@@ -20,9 +21,10 @@ import {firebase} from "../../config";
       try {
         await firebase.auth().signInWithEmailAndPassword(email, password);
       } catch (error) {
-        alert(error.message);
       }
     };
+
+
     return (
       <View style={styles.container}>
         <Text style={{ fontWeight: "bold", fontSize: 26 }}>Login to your account</Text>

@@ -17,9 +17,7 @@ export default function Header({screen}){
 
     const logout = async()=>{
         try{
-            firebase()
-                .signOut()
-                .then(() => console.log('User signed out!'));
+            await firebase.auth().signOut();
 
         }catch (e) {
             console.log(e)
