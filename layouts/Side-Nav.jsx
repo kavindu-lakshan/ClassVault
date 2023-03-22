@@ -8,6 +8,7 @@ import SettingsScreen from "../screens/Settings";
 import SavedScreen from "../screens/Saved";
 import ReferScreen from "../screens/Refer";
 import AdminDashboard from '../screens/admin/Dashboard'
+import Users from '../screens/admin/Users/Users'
 
 export default function Header({screen}){
     const Drawer = createDrawerNavigator();
@@ -51,7 +52,7 @@ export default function Header({screen}){
                     }}
                     component={
                         drawer.name==='Dashboard' ? AdminDashboard
-                            : drawer.name==='Settings' ? SettingsScreen
+                            : drawer.name==='Users' ? Users
                                 : drawer.name==='Saved Items' ? SavedScreen
                                     : ReferScreen
                     }

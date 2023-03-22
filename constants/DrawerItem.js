@@ -5,9 +5,9 @@ export default [
         iconName:'view-dashboard-outline'
     },
     {
-        name:'Settings',
+        name:'Users',
         iconType:'Feather',
-        iconName:'settings'
+        iconName:'users'
     },
     {
         name:'Saved Items',
