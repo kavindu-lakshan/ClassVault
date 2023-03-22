@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Picker} from "react-native";
+import {FlatList, Image, Picker, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {Searchbar} from 'react-native-paper';
 
 import {Dialog} from '@rneui/themed';
@@ -18,10 +18,15 @@ export default function Users() {
     const [filterUsers, setFilter] = useState([]);
     const [selectedUser, setSelectedUser] = useState({});
 
-    const [selectedType, setSelectedType] = useState("");
+    const [type, setType] = useState("");
     const [email, setEmail] = useState("");
     const [firstname, setFirstname] = useState("");
     const [lastname, setLastname] = useState("");
+
+    const [selectType, setSelectType] = useState("");
+    const [selectEmail, setSelectEmail] = useState("");
+    const [selectFirstName, setSelectFirstName] = useState("");
+    const [selectLastName, setSelectLastName] = useState("");
 
     useEffect(() => {
         getCurrentUser()
@@ -32,26 +37,34 @@ export default function Users() {
     }, [])
 
     useEffect(() => {
-        setFilter(
-            users.filter(item => {
+        filterUser()
+    }, [search, users])
+
+    const filterUser = () => {
+          let data =  users.filter(item => {
                 return item.firstname.toLowerCase().includes(search.toLowerCase()) ||
                     item.lastname.toLowerCase().includes(search.toLowerCase()) ||
+                    item.email.toLowerCase().includes(search.toLowerCase()) ||
                     item.email.toLowerCase().includes(search.toLowerCase())
-            })
+            }
         )
-    }, [search, users])
+        let uniqueObjArray = [...new Map(data.map((item) => [item["email"], item])).values()];
+        setFilter(uniqueObjArray)
+
+    }
 
     const allUsers = async () => {
         try {
             const user = [];
             firebase.firestore().collection("users").onSnapshot((snapshot) => {
                 snapshot.forEach((doc) => {
-                    const {firstname, lastname, email} = doc.data()
+                    const {firstname, lastname, email, type} = doc.data()
                     user.push({
                         id: doc.id,
                         firstname,
                         lastname,
-                        email
+                        email,
+                        type
                     })
                     setUsers(user)
                 })
@@ -71,47 +84,71 @@ export default function Users() {
     }
 
     const addUsers = async () => {
-        console.log(selectedType)
-        const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-        const data = {
-            firstname: firstname,
-            lastname: lastname,
-            email: email,
-            password: '11111111',
-            type:selectedType,
-            timestamp: timestamp
-        };
-        await firebase
-            .auth()
-            .createUserWithEmailAndPassword(data.email, data.password)
-            .then((e) => {
-                console.log(e)
-                firebase
-                    .firestore()
-                    .collection("users")
-                    .doc(e.uid)
-                    .set(data);
+        try {
+            const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+            const data = {
+                firstname: firstname,
+                lastname: lastname,
+                email: email,
+                password: '11111111',
+                type: type,
+                timestamp: timestamp
+            };
+            await firebase
+                .auth()
+                .createUserWithEmailAndPassword(data.email, data.password)
+                .then((e) => {
+                    console.log(e)
+                    firebase
+                        .firestore()
+                        .collection("users")
+                        .doc(e.uid)
+                        .set(data);
 
-            })
-            .catch((error) => {
-                alert(error.message);
-            });
-        addNewUserDialogOpen()
-        await allUsers()
+                })
+                .catch((error) => {
+                    alert(error.message);
+                });
+            addNewUserDialogOpen()
+            await allUsers()
+            filterUser()
+        } catch (e) {
+
+        }
+    }
+
+    const updateUser = async () => {
+        try {
+            const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+            const data = {
+                firstname: selectFirstName,
+                lastname: selectLastName,
+                email: selectEmail,
+                password: '11111111',
+                type: selectType,
+                timestamp: timestamp
+            };
+            const result = await firebase.firestore().collection("users").doc(selectedUser.id).update(data)
+            await allUsers()
+            filterUser()
+            setViewUserDialogVisible(false)
+        } catch (e) {
+
+        }
     }
 
     const viewUserDialogOpen = (item) => {
         console.log(item)
         setSelectedUser(item)
+        setSelectEmail(item.email)
+        setSelectFirstName(item.firstname)
+        setSelectType(item.type)
+        setSelectLastName(item.lastname)
         setViewUserDialogVisible(!viewUserDialogVisible);
     };
     const addNewUserDialogOpen = () => {
         setAddUserDialogVisible(!addUserDialogVisible)
     };
-
-    const ss = (aa)=>{
-       alert(aa)
-    }
 
 
     return (
@@ -144,7 +181,9 @@ export default function Users() {
                                 <Text style={styles.name}>Name : {item.firstname} {item.lastname}</Text>
                                 <Text style={styles.email}>Email: {item.email}</Text>
                             </View>
-                            <TouchableOpacity style={styles.viewMoreButton} onPress={()=>{viewUserDialogOpen(item)}}>
+                            <TouchableOpacity style={styles.viewMoreButton} onPress={() => {
+                                viewUserDialogOpen(item)
+                            }}>
                                 <Text style={styles.viewMoreButtonText}>View More</Text>
                             </TouchableOpacity>
                         </View>
@@ -169,7 +208,10 @@ export default function Users() {
                         placeholder="Ishara Madusanka"
                         autoCapitalize="none"
                         secureTextEntry={true}
-                        value={selectedUser.firstname}
+                        value={selectFirstName}
+                        onChangeText={(e) => {
+                            setSelectFirstName(e)
+                        }}
                     />
                     <Text style={styles.detailsTag}>Last Name</Text>
                     <TextInput
@@ -181,7 +223,10 @@ export default function Users() {
                         placeholder="Ishara Madusanka"
                         autoCapitalize="none"
                         secureTextEntry={true}
-                        value={selectedUser.lastname}
+                        value={selectLastName}
+                        onChangeText={(e) => {
+                            setSelectLastName(e)
+                        }}
                     />
                     <Text style={styles.detailsTag}>Email</Text>
                     <TextInput
@@ -192,8 +237,21 @@ export default function Users() {
                         placeholder="Ishara@gmail.com"
                         autoCapitalize="none"
                         secureTextEntry={true}
-                        value={selectedUser.email}
+                        value={selectEmail}
+                        onChangeText={(e) => {
+                            setSelectEmail(e)
+                        }}
                     />
+                    <Text style={styles.detailsTag}>Type</Text>
+                    <Picker
+                        selectedValue={selectType}
+                        style={{height: 30, width: 200}}
+                        onValueChange={(itemValue) => setSelectType(itemValue)}
+                    >
+                        <Picker.Item label="none" value="Please select value"/>
+                        <Picker.Item label="Teacher" value="teacher"/>
+                        <Picker.Item label="Checker" value="checker"/>
+                    </Picker>
                     <View style={{
                         flex: 1,
                         flexDirection: 'row',
@@ -201,7 +259,7 @@ export default function Users() {
                         paddingHorizontal: 16,
                         marginTop: 20
                     }}>
-                        <TouchableOpacity style={styles.editButton}>
+                        <TouchableOpacity style={styles.editButton} onPress={updateUser}>
                             <Text style={styles.dialogButtonText}>Edit</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.deleteButton}>
@@ -253,14 +311,15 @@ export default function Users() {
                         onChangeText={(email) => setEmail(email)}
                     />
                     <Text style={styles.detailsTag}>Type</Text>
+                    {type}
                     <Picker
-                        selectedValue={selectedType}
-                        style={{ height: 30, width: 200 }}
-                        onValueChange={(itemValue) => setSelectedType(itemValue)}
+                        selectedValue={type}
+                        style={{height: 30, width: 200}}
+                        onValueChange={(itemValue) => setType(itemValue)}
                     >
-                        <Picker.Item label="none" value="Please select value" />
-                        <Picker.Item label="Teacher" value="teacher" />
-                        <Picker.Item label="Checker" value="checker" />
+                        <Picker.Item label="none" value="Please select value"/>
+                        <Picker.Item label="Teacher" value="teacher"/>
+                        <Picker.Item label="Checker" value="checker"/>
                     </Picker>
                     <View style={{
                         flex: 1,

@@ -15,6 +15,7 @@ const Register = () => {
     const [lastname, setLastname] = useState("");
 
     const registerUser = async (email, password, firstname, lastname) => {
+        const type = 'student'
         await firebase
             .auth()
             .createUserWithEmailAndPassword(email, password)
@@ -36,7 +37,7 @@ const Register = () => {
                             .firestore()
                             .collection("users")
                             .doc(firebase.auth().currentUser.uid)
-                            .set({ firstname, lastname, email });
+                            .set({ firstname, lastname, email, type });
                     })
                     .catch((error) => {
                         alert(error.message);
