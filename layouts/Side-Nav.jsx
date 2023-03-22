@@ -8,7 +8,7 @@ import SettingsScreen from "../screens/Settings";
 import SavedScreen from "../screens/Saved";
 import ReferScreen from "../screens/Refer";
 import AdminDashboard from '../screens/admin/Dashboard'
-import Users from '../screens/admin/Users/Users'
+import Users from '../screens/admin/Users/Index'
 
 export default function Header({screen}){
     const Drawer = createDrawerNavigator();
