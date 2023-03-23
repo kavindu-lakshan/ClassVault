@@ -1,36 +1,55 @@
-import React, {useEffect, useState} from "react";
-import {NavigationContainer} from '@react-navigation/native';
-import {firebase} from "./config";
+import React, { useEffect, useState } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { firebase } from "./config";
 
-import AuhRoutes from './routes/auth_routes'
-import Routes from './routes/route'
-
+import AuhRoutes from "./routes/auth_routes";
+import Routes from "./routes/route";
+import CheckerRoutes from "./routes/checker-route";
 
 function App() {
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState();
+  const [loggeduser, setloggedUser] = useState("");
 
-    const [initializing, setInitializing] = useState(true);
-    const [user, setUser] = useState();
+  function onAuthStateChanged(user) {
+    setUser(user);
+    if (initializing) setInitializing(false);
+  }
 
-    function onAuthStateChanged(user) {
-        setUser(user);
-        if (initializing) setInitializing(false);
+  useEffect(() => {
+    return firebase.auth().onAuthStateChanged(onAuthStateChanged);
+  }, []);
+
+  if (firebase.auth().currentUser) {
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((user) => {
+        console.log(user);
+        setloggedUser(user.data().type);
+      })
+      .catch((error) => {
+        setloggedUser(null);
+      });
+
+    if (loggeduser == "admin") {
+      return <Routes />;
+    } else if (loggeduser == "checker") {
+      return <CheckerRoutes />;
     }
+  }
 
-    useEffect(() => {
-        return firebase.auth().onAuthStateChanged(onAuthStateChanged);
-    }, []);
-
-    if (!user) {
-        return (<AuhRoutes/>)
-    } else {
-        return (<Routes/>)
-    }
-
-
+  if (!firebase.auth().currentUser) {
+    return <AuhRoutes />;
+  }
 }
 
 export default () => {
-    return (<NavigationContainer>
-            <App/>
-        </NavigationContainer>);
-}
+  return (
+    <NavigationContainer>
+      <App />
+    </NavigationContainer>
+  );
+};
