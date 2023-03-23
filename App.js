@@ -4,7 +4,7 @@ import {firebase} from "./config";
 
 import AuhRoutes from './routes/auth_routes'
 import Routes from './routes/route'
-import Profile from './screens/Profile'
+
 
 function App() {
 
@@ -23,7 +23,7 @@ function App() {
     if (!user) {
         return (<AuhRoutes/>)
     } else {
-        return (<AuhRoutes/>)
+        return (<Routes/>)
     }
 
 

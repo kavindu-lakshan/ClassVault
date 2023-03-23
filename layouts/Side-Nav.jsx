@@ -4,8 +4,7 @@ import DrawerItems from "../constants/DrawerItem";
 import {createDrawerNavigator} from "@react-navigation/drawer";
 import {firebase} from "../config";
 
-import SavedScreen from "../screens/Saved";
-import ReferScreen from "../screens/Refer";
+import ReferScreen from "../screens/RefreshScreen";
 import AdminDashboard from '../screens/admin/Dashboard'
 import Users from '../screens/admin/Users/Users'
 import {useNavigation} from "@react-navigation/native";

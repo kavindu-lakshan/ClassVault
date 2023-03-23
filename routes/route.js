@@ -12,10 +12,6 @@ export default function Routes() {
                 name="admin-home"
                 component={AdminDashboard}
             />
-            <Stack.Screen
-                name="admin-home"
-                component={AdminDashboard}
-            />
 
         </Stack.Navigator>
 
