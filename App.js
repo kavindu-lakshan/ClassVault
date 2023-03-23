@@ -4,6 +4,7 @@ import {firebase} from "./config";
 
 import AuhRoutes from './routes/auth_routes'
 import Routes from './routes/route'
+import Profile from './screens/Profile'
 
 function App() {
 

@@ -16,6 +16,7 @@ import {Searchbar} from 'react-native-paper';
 
 import {Dialog} from '@rneui/themed';
 import {firebase} from "../../../config";
+import {confirm} from "react-confirm-box";
 
 export default function Users() {
 
@@ -196,24 +197,36 @@ export default function Users() {
     }
 
     const deleteUser = async () => {
-        setIsLoading(true)
-        firebase.firestore().collection("users")
-            .doc(selectedUser.id)
-            .delete()
-            .then(() => {
-                alert("Successfully Deleted..!!");
-            })
-            .catch((error) => {
-                alert(error);
-            });
-        await refreshPage()
-        closeViewDialog()
+        const options = {
+            labels: {
+                confirmable: "Confirm",
+                cancellable: "Cancel"
+            }
+        }
+
+        const result = await confirm("", options);
+        if (result) {
+            setIsLoading(true)
+            firebase.firestore().collection("users")
+                .doc(selectedUser.id)
+                .delete()
+                .then(() => {
+                    alert("Successfully Deleted..!!");
+                })
+                .catch((error) => {
+                    alert(error);
+                });
+            await refreshPage()
+            closeViewDialog()
+        }
+        console.log("You click No!");
+
     }
 
     return (
         <View>
             {
-                isLoading ?  <View style={{flex: 5, marginTop:'10%'}}>
+                isLoading ? <View style={{flex: 5, marginTop: '10%'}}>
                     <ActivityIndicator size="large" color="#00ff00"/>
                 </View> : <View style={{flex: 1}}>
 
@@ -329,7 +342,7 @@ export default function Users() {
                                     <TouchableOpacity style={styles.editButton} onPress={enableEditableText} hidden>
                                         <Text style={styles.dialogButtonText}>Edit</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={styles.deleteButton} onPress={showConfirmDialog}>
+                                    <TouchableOpacity style={styles.deleteButton} onPress={deleteUser}>
                                         <Text style={styles.dialogButtonText}>Delete</Text>
                                     </TouchableOpacity>
                                 </View>
