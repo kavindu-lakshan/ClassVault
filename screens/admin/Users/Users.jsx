@@ -69,28 +69,6 @@ export default function Users() {
 
     }
 
-    const allUsers = async () => {
-        try {
-            const user = [];
-            firebase.firestore().collection("users").onSnapshot((snapshot) => {
-                snapshot.forEach((doc) => {
-                    const {firstname, lastname, email, type} = doc.data()
-                    user.push({
-                        id: doc.id,
-                        firstname,
-                        lastname,
-                        email,
-                        type
-                    })
-                    setUsers(user)
-                })
-            })
-        } catch (e) {
-
-        }
-    }
-
-
     const viewUserDialogOpen = (item) => {
         setSelectedUser(item)
         setSelectEmail(item.email)
@@ -140,6 +118,27 @@ export default function Users() {
 
         }
 
+    }
+
+    const allUsers = async () => {
+        try {
+            const user = [];
+            firebase.firestore().collection("users").onSnapshot((snapshot) => {
+                snapshot.forEach((doc) => {
+                    const {firstname, lastname, email, type} = doc.data()
+                    user.push({
+                        id: doc.id,
+                        firstname,
+                        lastname,
+                        email,
+                        type
+                    })
+                    setUsers(user)
+                })
+            })
+        } catch (e) {
+
+        }
     }
 
     const addUsers = async () => {
@@ -222,6 +221,7 @@ export default function Users() {
         console.log("You click No!");
 
     }
+
 
     return (
         <View>

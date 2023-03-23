@@ -7,12 +7,15 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { firebase } from "../../config";
+import { useNavigation } from "@react-navigation/native";
 
 const Register = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [firstname, setFirstname] = useState("");
     const [lastname, setLastname] = useState("");
+
+    const navigation = useNavigation();
 
     const registerUser = async (email, password, firstname, lastname) => {
         const type = 'student'
@@ -30,7 +33,7 @@ const Register = () => {
                         alert("Verification email sent");
                     })
                     .catch((error) => {
-                        alert(error.message);
+
                     })
                     .then(() => {
                         firebase

@@ -23,7 +23,7 @@ function App() {
     if (!user) {
         return (<AuhRoutes/>)
     } else {
-        return (<Routes/>)
+        return (<AuhRoutes/>)
     }
 
 
