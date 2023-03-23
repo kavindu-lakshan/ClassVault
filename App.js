@@ -1,20 +1,55 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { firebase } from "./config";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+import AuhRoutes from "./routes/auth_routes";
+import Routes from "./routes/route";
+import CheckerRoutes from "./routes/checker-route";
+
+function App() {
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState();
+  const [loggeduser, setloggedUser] = useState("");
+
+  function onAuthStateChanged(user) {
+    setUser(user);
+    if (initializing) setInitializing(false);
+  }
+
+  useEffect(() => {
+    return firebase.auth().onAuthStateChanged(onAuthStateChanged);
+  }, []);
+
+  if (firebase.auth().currentUser) {
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((user) => {
+        console.log(user);
+        setloggedUser(user.data().type);
+      })
+      .catch((error) => {
+        setloggedUser(null);
+      });
+
+    if (loggeduser == "admin") {
+      return <Routes />;
+    } else if (loggeduser == "checker") {
+      return <CheckerRoutes />;
+    }
+  }
+
+  if (!firebase.auth().currentUser) {
+    return <AuhRoutes />;
+  }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+export default () => {
+  return (
+    <NavigationContainer>
+      <App />
+    </NavigationContainer>
+  );
+};
