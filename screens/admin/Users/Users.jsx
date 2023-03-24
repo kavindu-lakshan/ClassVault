@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   searchingBar: {
-    marginTop: "10px",
+    marginTop: 10,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",

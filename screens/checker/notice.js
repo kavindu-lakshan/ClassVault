@@ -13,6 +13,7 @@ import React, { useEffect, useState } from "react";
 import { Searchbar } from "react-native-paper";
 import { Dialog } from "@rneui/themed";
 import { firebase } from "../../config";
+// import AppLoader from "../../components/AppLoader";
 // import { confirm } from "react-confirm-box";
 
 export default function Notice() {
@@ -446,7 +447,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   searchingBar: {
-    marginTop: "10px",
+    marginTop: 10,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
