@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-// import { Searchbar } from "react-native-paper";
+import { Searchbar } from "react-native-paper";
 
 // import { Dialog } from "@rneui/themed";
 import { firebase } from "../../../config";
@@ -210,12 +210,12 @@ export default function Users() {
         <View style={{ flex: 1 }}>
           <View style={styles.searchingBar}>
             <View style={styles.view}>
-              {/* <Searchbar
+              <Searchbar
                 placeholder="Search"
                 onChangeText={(search) => {
                   setSearch(search);
                 }}
-              /> */}
+              />
             </View>
             <View style={styles.view}>
               <TouchableOpacity
