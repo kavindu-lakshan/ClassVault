@@ -10,10 +10,10 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Searchbar } from "react-native-paper";
-import { Dialog } from "@rneui/themed";
+// import { Searchbar } from "react-native-paper";
+// import { Dialog } from "@rneui/themed";
 import { firebase } from "../../config";
-import { confirm } from "react-confirm-box";
+// import { confirm } from "react-confirm-box";
 
 export default function Notice() {
   const [viewNoticeDialogVisible, setViewNoticeDialogVisible] = useState(false);
@@ -149,24 +149,24 @@ export default function Notice() {
       },
     };
 
-    const result = await confirm("", options);
-    if (result) {
-      setIsLoading(true);
-      firebase
-        .firestore()
-        .collection("notice")
-        .doc(selectedNotice.id)
-        .delete()
-        .then(() => {
-          alert("Successfully Deleted..!!");
-        })
-        .catch((error) => {
-          alert(error);
-        });
-      await refreshPage();
-      closeViewDialog();
-    }
-    console.log("You click No!");
+    // const result = await confirm("", options);
+    // if (result) {
+    //   setIsLoading(true);
+    //   firebase
+    //     .firestore()
+    //     .collection("notice")
+    //     .doc(selectedNotice.id)
+    //     .delete()
+    //     .then(() => {
+    //       alert("Successfully Deleted..!!");
+    //     })
+    //     .catch((error) => {
+    //       alert(error);
+    //     });
+    //   await refreshPage();
+    //   closeViewDialog();
+    // }
+    // console.log("You click No!");
   };
 
   return (
@@ -179,12 +179,12 @@ export default function Notice() {
         <View style={{ flex: 1 }}>
           <View style={styles.searchingBar}>
             <View style={styles.view}>
-              <Searchbar
+              {/* <Searchbar
                 placeholder="Search"
                 onChangeText={(search) => {
                   setSearch(search);
                 }}
-              />
+              /> */}
             </View>
             <View style={styles.view}>
               <TouchableOpacity
@@ -222,7 +222,7 @@ export default function Notice() {
           </ScrollView>
 
           {/*View Single Notice*/}
-          <Dialog
+          {/* <Dialog
             isVisible={viewNoticeDialogVisible}
             onBackdropPress={viewNoticeDialogOpen}
           >
@@ -301,10 +301,10 @@ export default function Notice() {
                 </View>
               )}
             </View>
-          </Dialog>
+          </Dialog> */}
 
           {/*add new notice*/}
-          <Dialog
+          {/* <Dialog
             isVisible={addNoticeDialogVisible}
             // onBackdropPress={viewUserDialogOpen}
           >
@@ -352,7 +352,7 @@ export default function Notice() {
                 </TouchableOpacity>
               </View>
             </View>
-          </Dialog>
+          </Dialog> */}
         </View>
       )}
     </View>

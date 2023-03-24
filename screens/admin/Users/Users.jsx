@@ -12,11 +12,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Searchbar } from "react-native-paper";
+// import { Searchbar } from "react-native-paper";
 
-import { Dialog } from "@rneui/themed";
+// import { Dialog } from "@rneui/themed";
 import { firebase } from "../../../config";
-import { confirm } from "react-confirm-box";
+// import { confirm } from "react-confirm-box";
 
 export default function Users() {
   const [viewUserDialogVisible, setViewUserDialogVisible] = useState(false);
@@ -180,23 +180,23 @@ export default function Users() {
       },
     };
 
-    const result = await confirm("", options);
-    if (result) {
-      setIsLoading(true);
-      firebase
-        .firestore()
-        .collection("users")
-        .doc(selectedUser.id)
-        .delete()
-        .then(() => {
-          alert("Successfully Deleted..!!");
-        })
-        .catch((error) => {
-          alert(error);
-        });
-      await refreshPage();
-      closeViewDialog();
-    }
+    // const result = await confirm("", options);
+    // if (result) {
+    //   setIsLoading(true);
+    //   firebase
+    //     .firestore()
+    //     .collection("users")
+    //     .doc(selectedUser.id)
+    //     .delete()
+    //     .then(() => {
+    //       alert("Successfully Deleted..!!");
+    //     })
+    //     .catch((error) => {
+    //       alert(error);
+    //     });
+    //   await refreshPage();
+    //   closeViewDialog();
+    // }
     console.log("You click No!");
   };
 
@@ -210,12 +210,12 @@ export default function Users() {
         <View style={{ flex: 1 }}>
           <View style={styles.searchingBar}>
             <View style={styles.view}>
-              <Searchbar
+              {/* <Searchbar
                 placeholder="Search"
                 onChangeText={(search) => {
                   setSearch(search);
                 }}
-              />
+              /> */}
             </View>
             <View style={styles.view}>
               <TouchableOpacity
@@ -256,8 +256,8 @@ export default function Users() {
             />
           </ScrollView>
 
-          {/*View Single User*/}
-          <Dialog
+          {/* View Single User */}
+          {/* <Dialog
             isVisible={viewUserDialogVisible}
             onBackdropPress={viewUserDialogOpen}
           >
@@ -368,10 +368,10 @@ export default function Users() {
                 </View>
               )}
             </View>
-          </Dialog>
+          </Dialog> */}
 
           {/*add new user*/}
-          <Dialog
+          {/* <Dialog
             isVisible={addUserDialogVisible}
             // onBackdropPress={viewUserDialogOpen}
           >
@@ -443,7 +443,7 @@ export default function Users() {
                 </TouchableOpacity>
               </View>
             </View>
-          </Dialog>
+          </Dialog> */}
         </View>
       )}
     </View>

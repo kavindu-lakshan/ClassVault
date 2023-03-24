@@ -6,6 +6,10 @@ import AuhRoutes from "./routes/auth_routes";
 import Routes from "./routes/route";
 import CheckerRoutes from "./routes/checker-route";
 
+import { Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
+
 function App() {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AdminDashboard from "../layouts/Side-Nav";
 import Login from "../screens/auth/login";
 
@@ -8,7 +8,7 @@ import CheckerDashboard from "../layouts/Checker-Side-Nav";
 import Notice from "../screens/checker/notice";
 import noticeUpdate from "../screens/checker/notice";
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 export default function Routes() {
   return (
