@@ -16,7 +16,6 @@ import { Searchbar } from "react-native-paper";
 
 import { Dialog } from "@rneui/themed";
 import { firebase } from "../../../config";
-// import { confirm } from "react-confirm-box";
 
 export default function Users() {
   const [viewUserDialogVisible, setViewUserDialogVisible] = useState(false);
