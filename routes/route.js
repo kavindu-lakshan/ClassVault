@@ -8,6 +8,11 @@ import CheckerDashboard from "../layouts/Checker-Side-Nav";
 import Notice from "../screens/checker/notice";
 import noticeUpdate from "../screens/checker/notice";
 
+//Teacher Routes
+import TeacherDashboard from "../layouts/Teacher-Side-Nav";
+import Course from "../screens/teacher/course";
+import courseUpdate from "../screens/teacher/course";
+
 const Stack = createStackNavigator();
 
 export default function Routes() {
@@ -17,6 +22,9 @@ export default function Routes() {
 
       {/* checker routes */}
       <Stack.Screen name="checker-home" component={CheckerDashboard} />
+
+      {/* teacher routes */}
+      <Stack.Screen name="teacher-home" component={TeacherDashboard} />
     </Stack.Navigator>
   );
 }

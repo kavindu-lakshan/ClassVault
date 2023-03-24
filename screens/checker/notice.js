@@ -204,7 +204,7 @@ export default function Notice() {
                 <View style={styles.userDetailsCard}>
                   <View style={styles.detailsContainer}>
                     <Text style={styles.topic}>
-                      {item.topic[0].toUpperCase() + item.topic.slice(1)}
+                      {item.topic.toUpperCase() + item.topic.slice(1)}
                     </Text>
                     <Text style={styles.desc}>{item.description}</Text>
                   </View>
