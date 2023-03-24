@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import { Searchbar } from "react-native-paper";
 
-// import { Dialog } from "@rneui/themed";
+import { Dialog } from "@rneui/themed";
 import { firebase } from "../../../config";
 // import { confirm } from "react-confirm-box";
 
@@ -257,7 +257,7 @@ export default function Users() {
           </ScrollView>
 
           {/* View Single User */}
-          {/* <Dialog
+          <Dialog
             isVisible={viewUserDialogVisible}
             onBackdropPress={viewUserDialogOpen}
           >
@@ -368,10 +368,10 @@ export default function Users() {
                 </View>
               )}
             </View>
-          </Dialog> */}
+          </Dialog>
 
           {/*add new user*/}
-          {/* <Dialog
+          <Dialog
             isVisible={addUserDialogVisible}
             // onBackdropPress={viewUserDialogOpen}
           >
@@ -443,7 +443,7 @@ export default function Users() {
                 </TouchableOpacity>
               </View>
             </View>
-          </Dialog> */}
+          </Dialog>
         </View>
       )}
     </View>

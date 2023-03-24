@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Searchbar } from "react-native-paper";
-// import { Dialog } from "@rneui/themed";
+import { Dialog } from "@rneui/themed";
 import { firebase } from "../../config";
 // import { confirm } from "react-confirm-box";
 
@@ -222,7 +222,7 @@ export default function Notice() {
           </ScrollView>
 
           {/*View Single Notice*/}
-          {/* <Dialog
+          <Dialog
             isVisible={viewNoticeDialogVisible}
             onBackdropPress={viewNoticeDialogOpen}
           >
@@ -301,10 +301,10 @@ export default function Notice() {
                 </View>
               )}
             </View>
-          </Dialog> */}
+          </Dialog>
 
           {/*add new notice*/}
-          {/* <Dialog
+          <Dialog
             isVisible={addNoticeDialogVisible}
             // onBackdropPress={viewUserDialogOpen}
           >
@@ -352,7 +352,7 @@ export default function Notice() {
                 </TouchableOpacity>
               </View>
             </View>
-          </Dialog> */}
+          </Dialog>
         </View>
       )}
     </View>
