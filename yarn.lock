@@ -6537,7 +6537,7 @@ lottie-ios@^3.4.0:
   resolved "https://registry.npmjs.org/lottie-ios/-/lottie-ios-3.5.0.tgz"
   integrity sha512-DM6BYLhHTzvUsK89AjY+K9RwVGkOBwbH/iytjyZUmFbXz8DVsoPEyy+c7L5NZmVouZHvLnOQp6NaYTkwMo+iOg==
 
-lottie-react-native@>=3.0.0:
+lottie-react-native@^5.1.5, lottie-react-native@>=3.0.0:
   version "5.1.5"
   resolved "https://registry.npmjs.org/lottie-react-native/-/lottie-react-native-5.1.5.tgz"
   integrity sha512-xl6uEo50joQeIqso5SvPKt1uGBqMhgNgs+36S4725Nfigf4zAY23/I9QEEkJF+1BHq7wKCeYha2KafLTm20gqA==

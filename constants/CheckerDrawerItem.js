@@ -1,12 +1,12 @@
 export default [
   {
     name: "CheckerDashboard",
-    iconType: "FontAwesome5",
-    iconName: "user-friends",
+    iconType: "Material",
+    iconName: "view-dashboard-outline",
   },
   {
     name: "Notices",
-    iconType: "FontAwesome5",
-    iconName: "user-friends",
+    iconType: "Material",
+    iconName: "bookmark-check-outline",
   },
 ];
