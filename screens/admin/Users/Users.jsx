@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  SectionList,
   Image,
   ScrollView,
   StyleSheet,
@@ -42,30 +43,8 @@ export default function Users() {
   const userRef = firebase.firestore().collection("users");
 
   useEffect(() => {
-    const allUsers = async () => {
-      try {
-        const user = [];
-       await firebase
-          .firestore()
-          .collection("users")
-          .onSnapshot((snapshot) => {
-            snapshot.forEach((doc) => {
-              const { firstname, lastname, email, type } = doc.data();
-              user.push({
-                id: doc.id,
-                firstname,
-                lastname,
-                email,
-                type,
-              });
-              setUsers(user);
-            });
-          });
-      } catch (e) { }
-    }
-
     allUsers()
-  }, [users]);
+  }, []);
 
   useEffect(() => {
     const filterUser = () => {
@@ -97,7 +76,7 @@ export default function Users() {
     setViewUserDialogVisible(!viewUserDialogVisible);
   };
   const addNewUserDialogOpen = () => {
-    setAddUserDialogVisible(true);
+    setAddUserDialogVisible(!addUserDialogVisible);
   };
 
   const closeViewDialog = () => {
@@ -105,8 +84,7 @@ export default function Users() {
     setViewUserDialogVisible(!viewUserDialogVisible);
   };
   const closeAddDialog = () => {
-    alert("close")
-    setAddUserDialogVisible(false);
+    setAddUserDialogVisible(!addUserDialogVisible);
   };
 
   const enableEditableText = () => {
@@ -115,16 +93,17 @@ export default function Users() {
 
   const refreshPage = async () => {
     await allUsers();
-    filterUser();
+    await filterUser();
   };
 
   const allUsers = async () => {
     try {
       const user = [];
-      firebase
+      setIsLoading(true);
+      let result = await firebase
         .firestore()
         .collection("users")
-        .onSnapshot((snapshot) => {
+        .get().then((snapshot) => {
           snapshot.forEach((doc) => {
             const { firstname, lastname, email, type } = doc.data();
             user.push({
@@ -136,9 +115,10 @@ export default function Users() {
             });
             setUsers(user);
           });
-        });
+        })
+      console.log(result)
     } catch (e) { }
-  };
+  }
 
   const filterUser = () => {
     let data = users.filter((item) => {
@@ -161,33 +141,32 @@ export default function Users() {
       if (!firstname || !lastname || !email || !type) {
         alert("Please fill all details")
       } else {
-        alert("add user")
-        setIsLoading(true);
-        const timestamp = firebase.firestore.FieldValue.serverTimestamp();
         const data = {
           firstname: firstname,
           lastname: lastname,
           email: email,
           type: type,
-          timestamp: timestamp,
         };
-        firebase.firestore().collection("users").add(data).then(() => {
-          alert("Successfully Added..!!")
-          setAddUserDialogVisible(false);
-          refreshPage();
-        }).catch(() => {
-          alert("error")
-        })
+        let result = await firebase.firestore().collection("users").add(data)
+        alert("Successfully Added..!!")
+        refreshPage();
+        closeAddDialog();
+
       }
     } catch (e) {
       alert("erre")
       console.log(e)
+      closeAddDialog();
+      refreshPage();
     }
+
+
   };
 
   const updateUser = async () => {
     try {
       setIsLoading(true);
+      alert("update user")
       const timestamp = firebase.firestore.FieldValue.serverTimestamp();
       const data = {
         firstname: selectFirstName,
@@ -197,14 +176,20 @@ export default function Users() {
         type: selectType,
         timestamp: timestamp,
       };
-      const result = await firebase
+      let result = await firebase
         .firestore()
         .collection("users")
         .doc(selectedUser.id)
-        .update(data);
-      await refreshPage();
-      setViewUserDialogVisible(false);
-    } catch (e) { }
+        .update(data).then(() => {
+          alert("Successfully Updated..!!")
+          setViewUserDialogVisible(!viewUserDialogVisible);
+          refreshPage();
+        }).catch(() => {
+          alert("error")
+        })
+    } catch (e) {
+      alert(e)
+    }
   };
 
   const confirmedDelete = async () => {
@@ -222,6 +207,8 @@ export default function Users() {
       });
     await refreshPage();
     closeViewDialog();
+
+
   }
 
   const deleteUser = async () => {
@@ -294,7 +281,7 @@ export default function Users() {
           {/* View Single User */}
           <Dialog
             isVisible={viewUserDialogVisible}
-            onBackdropPress={viewUserDialogOpen}
+            onBackdropPress={closeViewDialog}
           >
             <View>
               <Image
@@ -312,6 +299,7 @@ export default function Users() {
                   onChangeText={(e) => {
                     setSelectFirstName(e);
                   }}
+                  disabled={isTextDisabled}
                   autoCapitalize="none"
                   underlineColorAndroid="transparent"
                   autoCorrect={false}
@@ -327,6 +315,7 @@ export default function Users() {
                   onChangeText={(e) => {
                     setSelectLastName(e);
                   }}
+                  disabled={isTextDisabled}
                   autoCapitalize="none"
                   underlineColorAndroid="transparent"
                   autoCorrect={false}
@@ -342,6 +331,7 @@ export default function Users() {
                   onChangeText={(e) => {
                     setSelectEmail(e);
                   }}
+                  disabled={isTextDisabled}
                   autoCapitalize="none"
                   underlineColorAndroid="transparent"
                   autoCorrect={false}
@@ -360,11 +350,11 @@ export default function Users() {
               {isTextDisabled && (
                 <View
                   style={{
-                   
+
                     flexDirection: "row",
                     justifyContent: "space-between",
-                    
-                    
+
+
                   }}
                 >
                   <TouchableOpacity
@@ -384,7 +374,7 @@ export default function Users() {
               )}
               {!isTextDisabled && (
                 <View
-                  style={{    
+                  style={{
                     flexDirection: "row",
                     justifyContent: "space-between",
                     paddingHorizontal: 16
@@ -478,13 +468,13 @@ export default function Users() {
               >
                 <TouchableOpacity
                   style={styles.editButton}
-                  onPress={closeAddDialog}
+                  onPress={(e) => { closeAddDialog() }}
                 >
                   <Text style={styles.dialogButtonText}>Cancel</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.deleteButton}
-                  onPress={addUsers}
+                  onPress={(e) => { addUsers() }}
                 >
                   <Text style={styles.dialogButtonText}>Add</Text>
                 </TouchableOpacity>

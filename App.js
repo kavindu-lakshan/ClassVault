@@ -44,6 +44,7 @@ function App() {
           setloggedUser(null);
         });
 
+
       if (loggeduser == "admin") {
         return <Routes />;
       } else if (loggeduser == "checker") {
@@ -52,6 +53,7 @@ function App() {
         return <TeacherRoutes />;
       }
     }
+
 
     if (!firebase.auth().currentUser) {
       return <AuhRoutes />;

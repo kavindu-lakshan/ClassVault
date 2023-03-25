@@ -13,7 +13,7 @@ import {
   import { Searchbar } from "react-native-paper";
   import { Dialog } from "@rneui/themed";
   import { firebase } from "../../config";
-  
+
   export default function Course() {
     const [viewCourseDialogVisible, setViewCourseDialogVisible] = useState(false);
     const [addCourseDialogVisible, setAddCourseDialogVisible] = useState(false);
@@ -38,6 +38,7 @@ import {
       await allCourse();
     }, []);
   
+
     //search
     useEffect(() => {
         filterCourse();
