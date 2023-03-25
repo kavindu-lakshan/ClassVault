@@ -4,6 +4,7 @@ import {
   ScrollView,
   StyleSheet,
   Animated,
+  Alert,
   Text,
   TextInput,
   TouchableOpacity,
@@ -35,7 +36,7 @@ export default function Notice() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const allUsers = async () => {
+    const allNotices = async () => {
       try {
         const notic = [];
         await firebase
@@ -54,8 +55,8 @@ export default function Notice() {
       } catch (e) { }
     }
 
-    allUsers()
-  }, [notice]);
+    allNotices()
+  }, []);
 
   useEffect(() => {
     const filterNotice = () => {
@@ -174,33 +175,38 @@ export default function Notice() {
   };
 
   //delete data from database
-  const deleteNotice = async () => {
-    const options = {
-      labels: {
-        confirmable: "Confirm",
-        cancellable: "Cancel",
-      },
-    };
+  const confirmedDelete = async () => {
+    setIsLoading(true);
+    firebase
+      .firestore()
+      .collection("notice")
+      .doc(selectedNotice.id)
+      .delete()
+      .then(() => {
+        alert("Successfully Deleted..!!");
+      })
+      .catch((error) => {
+        alert(error);
+      });
+    await refreshPage();
+    closeViewDialog();
 
-    // const result = await confirm("", options);
-    // if (result) {
-    //   setIsLoading(true);
-    //   firebase
-    //     .firestore()
-    //     .collection("notice")
-    //     .doc(selectedNotice.id)
-    //     .delete()
-    //     .then(() => {
-    //       alert("Successfully Deleted..!!");
-    //     })
-    //     .catch((error) => {
-    //       alert(error);
-    //     });
-    //   await refreshPage();
-    //   closeViewDialog();
-    // }
-    // console.log("You click No!");
+
+  }
+
+  const deleteNotice = async () => {
+    Alert.alert('Alert Title', 'My Alert Msg', [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      { text: 'OK', onPress: () => confirmedDelete() },
+    ]);
+
+    console.log("You click No!");
   };
+
 
   return (
     <View>

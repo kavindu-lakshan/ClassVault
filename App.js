@@ -44,7 +44,7 @@ function App() {
         });
 
       if (loggeduser == "admin") {
-        return <Routes />;
+        return <CheckerRoutes />;
       } else if (loggeduser == "checker") {
         return <CheckerRoutes />;
       }
