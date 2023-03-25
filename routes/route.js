@@ -12,7 +12,6 @@ export default function Routes() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="admin-home" component={AdminDashboard} />
-      <Stack.Screen name="Users" component={Notices} />
     </Stack.Navigator>
   );
 }

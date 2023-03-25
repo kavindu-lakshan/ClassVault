@@ -91,22 +91,7 @@ export default function Users() {
     await allUsers();
     filterUser();
   };
-
-  const showConfirmDialog = () => {
-    Alert.alert("Alert Title", "Alert message here...", [
-      {
-        text: "Ask me later",
-        onPress: () => console.warn("Ask me later pressed"),
-      },
-      {
-        text: "NO",
-        onPress: () => console.warn("NO Pressed"),
-        style: "cancel",
-      },
-      { text: "YES", onPress: () => console.warn("YES Pressed") },
-    ]);
-  };
-
+  
   const allUsers = async () => {
     try {
       const user = [];

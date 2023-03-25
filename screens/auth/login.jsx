@@ -27,8 +27,6 @@ const Login = () => {
       .then((data) => {
         console.log(data.data().type);
         if (data.data().type === "admin"){
-          alert("admin");
-          // navigation.navigate("admin-home");
           navigation.navigate("admin-home");
         }
       

@@ -29,7 +29,7 @@ export default function Header({ screen }) {
   return (
     <Drawer.Navigator
       drawerType="front"
-      initialRouteName="Dashboard"
+      initialRouteName="AdminDashboard"
       screenOptions={{
         activeTintColor: "#e91e63",
         itemStyle: { marginVertical: 10 },
@@ -69,7 +69,7 @@ export default function Header({ screen }) {
               ? Users
               : drawer.name === "Logout"
               ? logout
-              : ReferScreen
+              : Dashboard
           }
         />
       ))}
