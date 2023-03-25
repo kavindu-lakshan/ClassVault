@@ -225,9 +225,9 @@ export default function Notice() {
                 }}
               />
             </View>
-            <View style={styles.view}>
+            <View style={styles.floatingContainer}>
               <TouchableOpacity
-                style={styles.addBtn}
+                style={styles.floatingButton}
                 onPress={addNewNoticeDialogOpen}
               >
                 <Text style={styles.viewMoreButtonText}>ADD</Text>
@@ -579,5 +579,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "80%",
     height: 40,
+  },
+  floatingContainer: {
+    position: 'absolute',
+    bottom: 0,
+    right: 20,
+  },
+  floatingButton: {
+    backgroundColor: 'blue',
+    borderRadius: 50,
+    width: 50,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 3,
   },
 });
