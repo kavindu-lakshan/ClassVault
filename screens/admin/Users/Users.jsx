@@ -45,7 +45,7 @@ export default function Users() {
     const allUsers = async () => {
       try {
         const user = [];
-       await firebase
+        await firebase
           .firestore()
           .collection("users")
           .onSnapshot((snapshot) => {
@@ -94,15 +94,15 @@ export default function Users() {
     setSelectFirstName(item.firstname);
     setSelectType(item.type);
     setSelectLastName(item.lastname);
-    setViewUserDialogVisible(!viewUserDialogVisible);
+    setViewUserDialogVisible(true);
   };
   const addNewUserDialogOpen = () => {
     setAddUserDialogVisible(true);
   };
 
   const closeViewDialog = () => {
-    setIsTextDisabled(!isTextDisabled);
-    setViewUserDialogVisible(!viewUserDialogVisible);
+    setIsTextDisabled(false);
+    setViewUserDialogVisible(false);
   };
   const closeAddDialog = () => {
     alert("close")
@@ -188,6 +188,7 @@ export default function Users() {
   const updateUser = async () => {
     try {
       setIsLoading(true);
+      alert("update user")
       const timestamp = firebase.firestore.FieldValue.serverTimestamp();
       const data = {
         firstname: selectFirstName,
@@ -197,14 +198,20 @@ export default function Users() {
         type: selectType,
         timestamp: timestamp,
       };
-      const result = await firebase
+      firebase
         .firestore()
         .collection("users")
         .doc(selectedUser.id)
-        .update(data);
-      await refreshPage();
-      setViewUserDialogVisible(false);
-    } catch (e) { }
+        .update(data).then(() => {
+          alert("Successfully Updated..!!")
+          setViewUserDialogVisible(false);
+            refreshPage();
+        }).catch(()=>{
+          alert("error")
+        })
+    } catch (e) {
+      alert(e)
+    }
   };
 
   const confirmedDelete = async () => {
@@ -294,7 +301,7 @@ export default function Users() {
           {/* View Single User */}
           <Dialog
             isVisible={viewUserDialogVisible}
-            onBackdropPress={viewUserDialogOpen}
+            onBackdropPress={closeViewDialog}
           >
             <View>
               <Image
@@ -312,6 +319,7 @@ export default function Users() {
                   onChangeText={(e) => {
                     setSelectFirstName(e);
                   }}
+                  disabled = {isTextDisabled}
                   autoCapitalize="none"
                   underlineColorAndroid="transparent"
                   autoCorrect={false}
@@ -327,6 +335,7 @@ export default function Users() {
                   onChangeText={(e) => {
                     setSelectLastName(e);
                   }}
+                  disabled = {isTextDisabled}
                   autoCapitalize="none"
                   underlineColorAndroid="transparent"
                   autoCorrect={false}
@@ -342,6 +351,7 @@ export default function Users() {
                   onChangeText={(e) => {
                     setSelectEmail(e);
                   }}
+                  disabled = {isTextDisabled}
                   autoCapitalize="none"
                   underlineColorAndroid="transparent"
                   autoCorrect={false}
@@ -360,11 +370,11 @@ export default function Users() {
               {isTextDisabled && (
                 <View
                   style={{
-                   
+
                     flexDirection: "row",
                     justifyContent: "space-between",
-                    
-                    
+
+
                   }}
                 >
                   <TouchableOpacity
@@ -384,7 +394,7 @@ export default function Users() {
               )}
               {!isTextDisabled && (
                 <View
-                  style={{    
+                  style={{
                     flexDirection: "row",
                     justifyContent: "space-between",
                     paddingHorizontal: 16
@@ -392,13 +402,13 @@ export default function Users() {
                 >
                   <TouchableOpacity
                     style={styles.editButton}
-                    onPress={closeViewDialog}
+                    onPress={(e)=>{closeViewDialog}}
                   >
                     <Text style={styles.dialogButtonText}>Close</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.deleteButton}
-                    onPress={updateUser}
+                    onPress={(e)=>(updateUser())}
                   >
                     <Text style={styles.dialogButtonText}>Update</Text>
                   </TouchableOpacity>

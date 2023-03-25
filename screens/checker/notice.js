@@ -34,28 +34,28 @@ export default function Notice() {
   const [isTextDisabled, setIsTextDisabled] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(async () => {
-    const allNotices = async () => {
+  useEffect(() => {
+    const allUsers = async () => {
       try {
-        const notice = [];
-        firebase
+        const notic = [];
+        await firebase
           .firestore()
           .collection("notice")
           .onSnapshot((snapshot) => {
             snapshot.forEach((doc) => {
-              const { topic, description } = doc.data();
-              notice.push({
+              const {  topic, description } = doc.data();
+              notic.push({
                 id: doc.id,
-                topic,
-                description,
+                topic, description
               });
-              setNotice(notice);
+              setNotice(notic);
             });
           });
-      } catch (e) {}
-    };
-    allNotices()
-  }, []);
+      } catch (e) { }
+    }
+
+    allUsers()
+  }, [notice]);
 
   useEffect(() => {
     const filterNotice = () => {
@@ -133,7 +133,7 @@ export default function Notice() {
             setNotice(notice);
           });
         });
-    } catch (e) {}
+    } catch (e) { }
   };
 
   //add data
@@ -151,7 +151,7 @@ export default function Notice() {
 
       addNewNoticeDialogOpen();
       await refreshPage();
-    } catch (e) {}
+    } catch (e) { }
   };
 
   const updateNotice = async () => {
@@ -170,7 +170,7 @@ export default function Notice() {
         .update(data);
       await refreshPage();
       setViewNoticeDialogVisible(false);
-    } catch (e) {}
+    } catch (e) { }
   };
 
   //delete data from database
@@ -210,8 +210,8 @@ export default function Notice() {
         </View>
       ) : (
         <View>
-          <View style={styles.searchingBar}>
-            <View style={styles.view}>
+          <View >
+            <View>
               <Searchbar
                 placeholder="Search"
                 onChangeText={(search) => {
@@ -229,30 +229,28 @@ export default function Notice() {
             </View>
           </View>
 
-          <ScrollView>
-            <FlatList
-              data={filterNotices}
-              numColumns={1}
-              renderItem={({ item }) => (
-                <View style={styles.userDetailsCard}>
-                  <View style={styles.detailsContainer}>
-                    <Text style={styles.topic}>
-                      {item.topic.toUpperCase() + item.topic.slice(1)}
-                    </Text>
-                    <Text style={styles.desc}>{item.description}</Text>
-                  </View>
-                  <TouchableOpacity
-                    style={styles.viewMoreButton}
-                    onPress={() => {
-                      viewNoticeDialogOpen(item);
-                    }}
-                  >
-                    <Text style={styles.viewMoreButtonText}>View More</Text>
-                  </TouchableOpacity>
+          <FlatList
+            data={filterNotices}
+            numColumns={1}
+            renderItem={({ item }) => (
+              <View style={styles.userDetailsCard}>
+                <View style={styles.detailsContainer}>
+                  <Text style={styles.topic}>
+                    {item.topic.toUpperCase() + item.topic.slice(1)}
+                  </Text>
+                  <Text style={styles.desc}>{item.description}</Text>
                 </View>
-              )}
-            />
-          </ScrollView>
+                <TouchableOpacity
+                  style={styles.viewMoreButton}
+                  onPress={() => {
+                    viewNoticeDialogOpen(item);
+                  }}
+                >
+                  <Text style={styles.viewMoreButtonText}>View More</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          />
 
           {/*View Single Notice*/}
           <Dialog
@@ -261,37 +259,39 @@ export default function Notice() {
           >
             <View>
               <Text style={styles.detailsTag}>Topic</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Topic"
-                disabled={isTextDisabled}
-                autoCorrect={false}
-                placeholderTextColor="#aaaaaa"
-                onChangeText={(topic) => setSelectTopic(topic)}
+              <View style={styles.formContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Topic"
+                  placeholderTextColor="#aaaaaa"
+                  onChangeText={(topic) => setSelectTopic(topic)}
                 value={selectTopic}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-              />
+                  autoCapitalize="none"
+                  underlineColorAndroid="transparent"
+                  autoCorrect={false}
+                />
+              </View>
               <Text style={styles.detailsTag}>Description</Text>
-              <TextInput
-                disabled={isTextDisabled}
-                autoCorrect={false}
-                style={styles.input}
-                placeholder="Description"
-                placeholderTextColor="#aaaaaa"
-                onChangeText={(description) => setSelectDesc(description)}
-                value={selectDesc}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-              />
+              <View style={styles.formContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Topic"
+                  placeholderTextColor="#aaaaaa"
+                  onChangeText={(description) => setSelectDesc(description)}
+                  value={selectDesc}
+                  autoCapitalize="none"
+                  underlineColorAndroid="transparent"
+                  autoCorrect={false}
+                />
+              </View>
               {isTextDisabled && (
                 <View
                   style={{
-                    flex: 1,
+
                     flexDirection: "row",
                     justifyContent: "space-between",
                     paddingHorizontal: 16,
-                    marginTop: 20,
+
                   }}
                 >
                   <TouchableOpacity
@@ -312,11 +312,9 @@ export default function Notice() {
               {!isTextDisabled && (
                 <View
                   style={{
-                    flex: 1,
                     flexDirection: "row",
                     justifyContent: "space-between",
                     paddingHorizontal: 16,
-                    marginTop: 20,
                   }}
                 >
                   <TouchableOpacity
@@ -339,36 +337,39 @@ export default function Notice() {
           {/*add new notice*/}
           <Dialog
             isVisible={addNoticeDialogVisible}
-            // onBackdropPress={viewUserDialogOpen}
+          // onBackdropPress={viewUserDialogOpen}
           >
             <View>
               <Text style={styles.detailsTag}>Topic</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Topic"
-                placeholderTextColor="#aaaaaa"
-                onChangeText={(topic) => setAddTopic(topic)}
-                value={addTopic}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-              />
+              <View style={styles.formContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="First Name"
+                  placeholderTextColor="#aaaaaa"
+                  onChangeText={(topic) => setAddTopic(topic)}
+                  autoCapitalize="none"
+                  underlineColorAndroid="transparent"
+                  autoCorrect={false}
+                />
+              </View>
               <Text style={styles.detailsTag}>Description</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Description"
-                placeholderTextColor="#aaaaaa"
-                onChangeText={(description) => setAddDesc(description)}
-                value={addDesc}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-              />
+              <View style={styles.formContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Description"
+                  placeholderTextColor="#aaaaaa"
+                  onChangeText={(description) => setAddDesc(description)}
+                  value={addDesc}
+                  underlineColorAndroid="transparent"
+                  autoCapitalize="none"
+                />
+              </View>
+
               <View
                 style={{
-                  flex: 1,
                   flexDirection: "row",
                   justifyContent: "space-between",
                   paddingHorizontal: 16,
-                  marginTop: 20,
                 }}
               >
                 <TouchableOpacity
@@ -567,5 +568,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
+  },
+  formContainer: {
+    flexDirection: "row",
+    width: "80%",
+    height: 40,
   },
 });
