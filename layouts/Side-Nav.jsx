@@ -23,6 +23,7 @@ export default function Header({ screen }) {
       await firebase.auth().signOut();
     } catch (e) {
       console.log(e);
+      navigation.navigate("login");
     }
     navigation.navigate("login");
   };
