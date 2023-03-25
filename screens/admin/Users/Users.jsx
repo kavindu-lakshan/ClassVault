@@ -42,29 +42,33 @@ export default function Users() {
   const userRef = firebase.firestore().collection("users");
 
   useEffect(() => {
-    userRef.onSnapshot((querySnapshot) => {
-      const users = [];
-      querySnapshot.forEach((doc) => {
-        const { firstname,
-          lastname,
-          email,
-          type, } = doc.data();
-          users.push({
-          id: doc.id,
-          firstname,
-          lastname,
-          email,
-          type,
-        });
-      });
-      setUsers(users);
-    });
-  }, []);
+    const allUsers = async () => {
+      try {
+        const user = [];
+        firebase
+          .firestore()
+          .collection("users")
+          .onSnapshot((snapshot) => {
+            snapshot.forEach((doc) => {
+              const { firstname, lastname, email, type } = doc.data();
+              user.push({
+                id: doc.id,
+                firstname,
+                lastname,
+                email,
+                type,
+              });
+              setUsers(user);
+            });
+          });
+      } catch (e) { }
+    }
+
+    allUsers()
+  }, [users]);
 
   useEffect(() => {
     const filterUser = () => {
-      alert('ava')
-      console.log(users);
       let data = users.filter((item) => {
         return (
           item.firstname.toLowerCase().includes(search.toLowerCase()) ||
@@ -212,8 +216,8 @@ export default function Users() {
         </View>
       ) : (
         <View>
-          <View style={styles.searchingBar}>
-            <View style={styles.view}>
+          <View >
+            <View style={styles.searchingBar}>
               <Searchbar
                 placeholder="Search"
                 onChangeText={(search) => {
@@ -242,7 +246,7 @@ export default function Users() {
                 />
                 <View style={styles.detailsContainer}>
                   <Text style={styles.name}>
-                    Name : "aa"
+                    Name : {item.firstname} {item.lastname}
                   </Text>
                   <Text style={styles.email}>Email: {item.email}</Text>
                 </View>
