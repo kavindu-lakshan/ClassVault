@@ -44,14 +44,16 @@ function App() {
           setloggedUser(null);
         });
 
-    if (loggeduser == "admin") {
-      return <Routes />;
-    } else if (loggeduser == "checker") {
-      return <CheckerRoutes />;
-    }else if (loggeduser == "teacher") {
-    return <TeacherRoutes />;
-  }
-  }
+
+      if (loggeduser == "admin") {
+        return <Routes />;
+      } else if (loggeduser == "checker") {
+        return <CheckerRoutes />;
+      }else if (loggeduser == "teacher") {
+        return <TeacherRoutes />;
+      }
+    }
+
 
     if (!firebase.auth().currentUser) {
       return <AuhRoutes />;

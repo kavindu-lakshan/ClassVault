@@ -13,8 +13,7 @@ import {
   import { Searchbar } from "react-native-paper";
   import { Dialog } from "@rneui/themed";
   import { firebase } from "../../config";
-  import { confirm } from "react-confirm-box";
-  
+
   export default function Course() {
     const [viewCourseDialogVisible, setViewCourseDialogVisible] = useState(false);
     const [addCourseDialogVisible, setAddCourseDialogVisible] = useState(false);
@@ -39,6 +38,8 @@ import {
       await allCourse();
     }, []);
   
+
+    //search
     useEffect(() => {
         filterCourse();
     }, [search, course]);
@@ -476,7 +477,7 @@ import {
       borderRadius: 8,
     },
     searchingBar: {
-      marginTop: "10px",
+      marginTop: 10,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",

@@ -12,4 +12,3 @@ import {
   const Teacher = () => {};
   
   export default Teacher;
-  
