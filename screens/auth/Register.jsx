@@ -20,8 +20,7 @@ const Register = () => {
   const navigation = useNavigation();
 
   const registerUser = async (email, password, firstname, lastname) => {
-    setLoading(true);
-    const type = "admin";
+    const type = "teacher";
     await firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
