@@ -4,6 +4,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  ActivityIndicator
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -15,6 +16,8 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [loading, setLoading] = useState(false);
+
   const redirectToPage = () => {
     firebase
       .firestore()
@@ -22,22 +25,31 @@ const Login = () => {
       .doc(firebase.auth().currentUser.uid)
       .get()
       .then((data) => {
-        if (data.data().type === "admin")
-          // navigation.navigate("admin-home");
-          navigation.navigate("checker-home");
+        console.log(data.data().type);
+        if (data.data().type === "admin"){
+          navigation.navigate("admin-home");
+        }
+      
         else if (data.data().type === "student") console.log("add route");
         else if (data.data().type === "checker") console.log("add route");
         else if (data.data().type === "teacher") console.log("add route");
+      }).catch(()=>{
+        
       });
+      setLoading(false);
   };
 
   const loginUser = async (email, password) => {
     try {
+      setLoading(true);
       let user = await firebase
         .auth()
         .signInWithEmailAndPassword(email, password);
       redirectToPage();
-    } catch (error) {}
+    } catch (error) {
+      alert("Your user name or password is incorrect");
+      setLoading(false);
+    }
   };
 
   return (
@@ -75,7 +87,11 @@ const Login = () => {
         onPress={() => loginUser(email, password)}
         style={styles.button}
       >
-        <Text style={{ fontWeight: "bold", fontSize: 22 }}>Login</Text>
+        {
+          loading ? <ActivityIndicator size="large" color="#00ff00" /> : <Text style={{ fontWeight: "bold", fontSize: 22 }}>Login</Text>
+        }
+        
+        {/* <Text style={{ fontWeight: "bold", fontSize: 22 }}><ActivityIndicator size="large" color="#00ff00" hidden /></Text> */}
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => navigation.navigate("register")}

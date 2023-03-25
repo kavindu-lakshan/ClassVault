@@ -10,13 +10,8 @@ export default [
     iconName: "users",
   },
   {
-    name: "Saved Items",
+    name: "Logout",
     iconType: "Material",
     iconName: "bookmark-check-outline",
-  },
-  {
-    name: "Refer a Friend!",
-    iconType: "FontAwesome5",
-    iconName: "user-friends",
   },
 ];

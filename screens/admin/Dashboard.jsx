@@ -1,62 +1,46 @@
-import * as React from 'react';
-import {View, Text, StyleSheet} from "react-native";
+import React from 'react';
+import {View, StyleSheet, Button, Alert, Text} from 'react-native';
 
-export default function Dashboard() {
+const Dashboard = () => {
+    const createTwoButtonAlert = () =>
+        Alert.alert('Alert Title', 'My Alert Msg', [
+            {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+            },
+            {text: 'OK', onPress: () => console.log('OK Pressed')},
+        ]);
+
+    const createThreeButtonAlert = () =>
+        Alert.alert('Alert Title', 'My Alert Msg', [
+            {
+                text: 'Ask me later',
+                onPress: () => console.log('Ask me later pressed'),
+            },
+            {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+            },
+            {text: 'OK', onPress: () => console.log('OK Pressed')},
+        ]);
+
     return (
-        <view>
-            <View style={{ flex: 1, flexDirection: 'row' }}>
-                <View style={styles.cardLeft}><Text style={styles.midNumberBig}>28</Text></View>
-                <View style={styles.cardRight}><Text style={styles.midNumberBig}>28</Text></View>
-            </View>
-            <View style={{ flex: 1, flexDirection: 'row' }}>
-                <View style={styles.cardLeft}><Text style={styles.midNumberSmall}>28</Text></View>
-                <View style={styles.cardRight}><Text style={styles.midNumberSmall}>28</Text></View>
-                <View style={styles.cardLeft}><Text style={styles.midNumberSmall}>28</Text></View>
-                <View style={styles.cardRight}><Text style={styles.midNumberSmall}>28</Text></View>
-            </View>
-        </view>
-
+        <View style={styles.container}>
+            <Text>Dashboard</Text>
+            {/* <Button title={'2-Button Alert'} onPress={createTwoButtonAlert} />
+            <Button title={'3-Button Alert'} onPress={createThreeButtonAlert} /> */}
+        </View>
     );
+};
 
-
-
-}
 const styles = StyleSheet.create({
-    cardLeft :{
-        backgroundColor: 'red',
+    container: {
         flex: 1,
-        width: 'auto',
-        height: 150,
-        marginTop:20,
-        marginLeft:20,
-        paddingHorizontal: 20,
-        paddingVertical:20,
-        borderRadius: 20,
-        justifyContent: 'center',
+        justifyContent: 'space-around',
         alignItems: 'center',
-
     },
-    cardRight :{
-        backgroundColor: 'blue',
-        flex: 1,
-        width:'auto',
-        height:150,
-        marginTop:20,
-        marginLeft:20,
-        borderRadius: 20,
-        marginRight:20,
-        paddingHorizontal: 20,
-        paddingVertical: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
-
-    },
-    midNumberBig :{
-        fontSize:72,
-        fontWeight:"bold"
-    },
-    midNumberSmall:{
-        fontSize:20,
-        fontWeight:"bold"
-    }
 });
+
+export default Dashboard;
