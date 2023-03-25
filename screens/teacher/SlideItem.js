@@ -43,10 +43,10 @@ const SlideItem = ({item}) => {
       />
 
       <View style={styles.content}>
-        <Text style={styles.title}>Find Qualified, Affordable Tutors Near You</Text>
+        <Text style={styles.title}>Discover your ideal working place today!</Text>
         <Text></Text>
         <Text></Text>
-        <Text style={styles.price}>Find Courses</Text>
+        <Text style={styles.price}>Manage Courses</Text>
         {/* <Text></Text> */}
         {/* <Button style={styles.buttonArrow}></Button> */}
         <Image source={require("../../assets/arrow1.png")} style={styles.imagearrow}></Image>
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   price: {
-    fontSize: 20,
+    fontSize: 17,
     fontWeight: 'bold',
   },
   imagearrow: {
