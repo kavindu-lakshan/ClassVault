@@ -35,10 +35,42 @@ export default function Notice() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(async () => {
-    await allNotices();
+    const allNotices = async () => {
+      try {
+        const notice = [];
+        firebase
+          .firestore()
+          .collection("notice")
+          .onSnapshot((snapshot) => {
+            snapshot.forEach((doc) => {
+              const { topic, description } = doc.data();
+              notice.push({
+                id: doc.id,
+                topic,
+                description,
+              });
+              setNotice(notice);
+            });
+          });
+      } catch (e) {}
+    };
+    allNotices()
   }, []);
 
   useEffect(() => {
+    const filterNotice = () => {
+      let data = notice.filter((item) => {
+        return (
+          item.topic.toLowerCase().includes(search.toLowerCase()) ||
+          item.description.toLowerCase().includes(search.toLowerCase())
+        );
+      });
+      let uniqueObjArray = [
+        ...new Map(data.map((item) => [item["topic"], item])).values(),
+      ];
+      setFilter(uniqueObjArray);
+      setIsLoading(false);
+    };
     filterNotice();
   }, [search, notice]);
 
@@ -177,7 +209,7 @@ export default function Notice() {
           <ActivityIndicator size="large" color="#00ff00" />
         </View>
       ) : (
-        <View style={{ flex: 1 }}>
+        <View>
           <View style={styles.searchingBar}>
             <View style={styles.view}>
               <Searchbar
