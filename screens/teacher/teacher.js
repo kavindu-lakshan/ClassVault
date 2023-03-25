@@ -14,6 +14,7 @@ import {
 import React, { useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 
+//animation
 const images = new Array(6).fill(
   "https://images.unsplash.com/photo-1556740749-887f6717d7e4"
 );
