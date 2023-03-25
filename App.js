@@ -34,11 +34,11 @@ function App() {
         setloggedUser(null);
       });
 
-    if (loggeduser == "admin") {
-      return <Routes />;
-    } else if (loggeduser == "checker") {
-      return <CheckerRoutes />;
-    }
+    // if (loggeduser == "admin") {
+    //   return <Routes />;
+    // } else if (loggeduser == "checker") {
+    //   return <CheckerRoutes />;
+    // }
   }
 
   if (!firebase.auth().currentUser) {

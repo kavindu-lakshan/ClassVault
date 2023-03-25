@@ -15,18 +15,18 @@ import { Dialog } from "@rneui/themed";
 import { firebase } from "../../config";
 import { confirm } from "react-confirm-box";
 
-export default function Notice() {
-  const [viewNoticeDialogVisible, setViewNoticeDialogVisible] = useState(false);
-  const [addNoticeDialogVisible, setAddNoticeDialogVisible] = useState(false);
+export default function Ticket() {
+  const [viewTicketDialogVisible, setViewTicketDialogVisible] = useState(false);
+  const [addTicketDialogVisible, setAddTicketDialogVisible] = useState(false);
 
   const [search, setSearch] = useState("");
-  const [notice, setNotice] = useState([]);
-  const [filterNotices, setFilter] = useState([]);
+  const [ticket, setTicket] = useState([]);
+  const [filterTickets, setFilter] = useState([]);
 
   const [addTopic, setAddTopic] = useState("");
   const [addDesc, setAddDesc] = useState("");
 
-  const [selectedNotice, setSelectedNotice] = useState({});
+  const [selectedTicket, setSelectedTicket] = useState({});
   const [selectTopic, setSelectTopic] = useState("");
   const [selectDesc, setSelectDesc] = useState("");
 
@@ -34,15 +34,15 @@ export default function Notice() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(async () => {
-    await allNotices();
+    await allTickets();
   }, []);
 
   useEffect(() => {
-    filterNotice();
-  }, [search, notice]);
+    filterTicket();
+  }, [search, ticket]);
 
-  const filterNotice = () => {
-    let data = notice.filter((item) => {
+  const filterTicket = () => {
+    let data = ticket.filter((item) => {
       return (
         item.topic.toLowerCase().includes(search.toLowerCase()) ||
         item.description.toLowerCase().includes(search.toLowerCase())
@@ -55,23 +55,23 @@ export default function Notice() {
     setIsLoading(false);
   };
 
-  const viewNoticeDialogOpen = (item) => {
-    setSelectedNotice(item);
+  const viewTicketDialogOpen = (item) => {
+    setSelectedTicket(item);
     setSelectTopic(item.topic);
     setSelectDesc(item.description);
-    setViewNoticeDialogVisible(!viewNoticeDialogVisible);
+    setViewNoticeDialogVisible(!viewTicketDialogVisible);
   };
 
-  const addNewNoticeDialogOpen = () => {
-    setAddNoticeDialogVisible(!addNoticeDialogVisible);
+  const addNewTicketDialogOpen = () => {
+    setAddTicketDialogVisible(!addTicketDialogVisible);
   };
 
   const closeViewDialog = () => {
     setIsTextDisabled(!isTextDisabled);
-    setViewNoticeDialogVisible(!viewNoticeDialogVisible);
+    setViewTicketDialogVisible(!viewTicketDialogVisible);
   };
   const closeAddDialog = () => {
-    setAddNoticeDialogVisible(!addNoticeDialogVisible);
+    setAddTicketDialogVisible(!addTicketDialogVisible);
   };
 
   const enableEditableText = () => {
@@ -79,16 +79,16 @@ export default function Notice() {
   };
 
   const refreshPage = async () => {
-    await allNotices();
-    filterNotice();
+    await allTickets();
+    filterTicket();
   };
 
-  const allNotices = async () => {
+  const allTickets = async () => {
     try {
-      const notice = [];
+      const ticket = [];
       firebase
         .firestore()
-        .collection("notice")
+        .collection("ticket")
         .onSnapshot((snapshot) => {
           snapshot.forEach((doc) => {
             const { topic, description } = doc.data();
@@ -97,14 +97,14 @@ export default function Notice() {
               topic,
               description,
             });
-            setNotice(notice);
+            setTicket(ticket);
           });
         });
     } catch (e) {}
   };
 
   //add data
-  const addNotice = async () => {
+  const addTicket = async () => {
     try {
       setIsLoading(true);
       const timestamp = firebase.firestore.FieldValue.serverTimestamp();
@@ -114,14 +114,14 @@ export default function Notice() {
         createdAt: timestamp,
       };
 
-      await firebase.firestore().collection("notice").add(data);
+      await firebase.firestore().collection("ticket").add(data);
 
-      addNewNoticeDialogOpen();
+      addNewTicketDialogOpen();
       await refreshPage();
     } catch (e) {}
   };
 
-  const updateNotice = async () => {
+  const updateTicket = async () => {
     try {
       setIsLoading(true);
       const timestamp = firebase.firestore.FieldValue.serverTimestamp();
@@ -132,16 +132,16 @@ export default function Notice() {
       };
       const result = await firebase
         .firestore()
-        .collection("notice")
-        .doc(selectedNotice.id)
+        .collection("ticket")
+        .doc(selectedTicket.id)
         .update(data);
       await refreshPage();
-      setViewNoticeDialogVisible(false);
+      setViewTicketDialogVisible(false);
     } catch (e) {}
   };
 
   //delete data from database
-  const deleteNotice = async () => {
+  const deleteTicket = async () => {
     const options = {
       labels: {
         confirmable: "Confirm",
@@ -154,8 +154,8 @@ export default function Notice() {
       setIsLoading(true);
       firebase
         .firestore()
-        .collection("notice")
-        .doc(selectedNotice.id)
+        .collection("ticket")
+        .doc(selectedTicket.id)
         .delete()
         .then(() => {
           alert("Successfully Deleted..!!");
@@ -189,7 +189,7 @@ export default function Notice() {
             <View style={styles.view}>
               <TouchableOpacity
                 style={styles.addBtn}
-                onPress={addNewNoticeDialogOpen}
+                onPress={addNewTicketDialogOpen}
               >
                 <Text style={styles.viewMoreButtonText}>ADD</Text>
               </TouchableOpacity>
@@ -198,7 +198,7 @@ export default function Notice() {
 
           <ScrollView>
             <FlatList
-              data={filterNotices}
+              data={filterTickets}
               numColumns={1}
               renderItem={({ item }) => (
                 <View style={styles.userDetailsCard}>
@@ -211,7 +211,7 @@ export default function Notice() {
                   <TouchableOpacity
                     style={styles.viewMoreButton}
                     onPress={() => {
-                      viewNoticeDialogOpen(item);
+                      viewTicketDialogOpen(item);
                     }}
                   >
                     <Text style={styles.viewMoreButtonText}>View More</Text>
@@ -221,10 +221,10 @@ export default function Notice() {
             />
           </ScrollView>
 
-          {/*View Single Notice*/}
+          {/*View Single Ticket*/}
           <Dialog
-            isVisible={viewNoticeDialogVisible}
-            onBackdropPress={viewNoticeDialogOpen}
+            isVisible={viewTicketDialogVisible}
+            onBackdropPress={viewTicketDialogOpen}
           >
             <View>
               <Text style={styles.detailsTag}>Topic</Text>
@@ -270,7 +270,7 @@ export default function Notice() {
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.deleteButton}
-                    onPress={deleteNotice}
+                    onPress={deleteTicket}
                   >
                     <Text style={styles.dialogButtonText}>Delete</Text>
                   </TouchableOpacity>
@@ -294,7 +294,7 @@ export default function Notice() {
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.deleteButton}
-                    onPress={updateNotice}
+                    onPress={updateTicket}
                   >
                     <Text style={styles.dialogButtonText}>Update</Text>
                   </TouchableOpacity>
@@ -303,9 +303,9 @@ export default function Notice() {
             </View>
           </Dialog>
 
-          {/*add new notice*/}
+          {/*add new ticket*/}
           <Dialog
-            isVisible={addNoticeDialogVisible}
+            isVisible={addTicketDialogVisible}
             // onBackdropPress={viewUserDialogOpen}
           >
             <View>
@@ -346,7 +346,7 @@ export default function Notice() {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.deleteButton}
-                  onPress={addNotice}
+                  onPress={addTicket}
                 >
                   <Text style={styles.dialogButtonText}>Add</Text>
                 </TouchableOpacity>
