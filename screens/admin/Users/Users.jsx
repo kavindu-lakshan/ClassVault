@@ -97,7 +97,7 @@ export default function Users() {
     setViewUserDialogVisible(!viewUserDialogVisible);
   };
   const addNewUserDialogOpen = () => {
-    setAddUserDialogVisible(!addUserDialogVisible);
+    setAddUserDialogVisible(true);
   };
 
   const closeViewDialog = () => {
@@ -105,7 +105,8 @@ export default function Users() {
     setViewUserDialogVisible(!viewUserDialogVisible);
   };
   const closeAddDialog = () => {
-    setAddUserDialogVisible(!addUserDialogVisible);
+    alert("close")
+    setAddUserDialogVisible(false);
   };
 
   const enableEditableText = () => {
@@ -114,7 +115,7 @@ export default function Users() {
 
   const refreshPage = async () => {
     await allUsers();
-    // filterUser();
+    filterUser();
   };
 
   const allUsers = async () => {
@@ -139,23 +140,49 @@ export default function Users() {
     } catch (e) { }
   };
 
+  const filterUser = () => {
+    let data = users.filter((item) => {
+      return (
+        item.firstname.toLowerCase().includes(search.toLowerCase()) ||
+        item.lastname.toLowerCase().includes(search.toLowerCase()) ||
+        item.email.toLowerCase().includes(search.toLowerCase()) ||
+        item.email.toLowerCase().includes(search.toLowerCase())
+      );
+    });
+    let uniqueObjArray = [
+      ...new Map(data.map((item) => [item["email"], item])).values(),
+    ];
+    setFilter(uniqueObjArray);
+    setIsLoading(false);
+  };
+
   const addUsers = async () => {
     try {
-      setIsLoading(true);
-      const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-      const data = {
-        firstname: firstname,
-        lastname: lastname,
-        email: email,
-        type: type,
-        timestamp: timestamp,
-      };
-
-      await firebase.firestore().collection("users").add(data);
-
-      addNewUserDialogOpen();
-      await refreshPage();
-    } catch (e) { }
+      if (!firstname || !lastname || !email || !type) {
+        alert("Please fill all details")
+      } else {
+        alert("add user")
+        setIsLoading(true);
+        const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+        const data = {
+          firstname: firstname,
+          lastname: lastname,
+          email: email,
+          type: type,
+          timestamp: timestamp,
+        };
+        firebase.firestore().collection("users").add(data).then(() => {
+          alert("Successfully Added..!!")
+          setAddUserDialogVisible(false);
+          refreshPage();
+        }).catch(() => {
+          alert("error")
+        })
+      }
+    } catch (e) {
+      alert("erre")
+      console.log(e)
+    }
   };
 
   const updateUser = async () => {
@@ -180,31 +207,33 @@ export default function Users() {
     } catch (e) { }
   };
 
-  const deleteUser = async () => {
-    const options = {
-      labels: {
-        confirmable: "Confirm",
-        cancellable: "Cancel",
-      },
-    };
+  const confirmedDelete = async () => {
+    setIsLoading(true);
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(selectedUser.id)
+      .delete()
+      .then(() => {
+        alert("Successfully Deleted..!!");
+      })
+      .catch((error) => {
+        alert(error);
+      });
+    await refreshPage();
+    closeViewDialog();
+  }
 
-    // const result = await confirm("", options);
-    // if (result) {
-    //   setIsLoading(true);
-    //   firebase
-    //     .firestore()
-    //     .collection("users")
-    //     .doc(selectedUser.id)
-    //     .delete()
-    //     .then(() => {
-    //       alert("Successfully Deleted..!!");
-    //     })
-    //     .catch((error) => {
-    //       alert(error);
-    //     });
-    //   await refreshPage();
-    //   closeViewDialog();
-    // }
+  const deleteUser = async () => {
+    Alert.alert('Alert Title', 'My Alert Msg', [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      { text: 'OK', onPress: () => confirmedDelete() },
+    ]);
+
     console.log("You click No!");
   };
 
@@ -386,36 +415,47 @@ export default function Users() {
                 source={require("../../../assets/download.jpg")}
                 style={styles.avatarShow}
               />
+
               <Text style={styles.detailsTag}>First Name</Text>
-              <TextInput
-                style={styles.input}
-                placeholderTextColor="#aaaaaa"
-                underlineColorAndroid="transparent"
-                autoCorrect={false}
-                placeholder="Enter First Name"
-                autoCapitalize="none"
-                onChangeText={(fName) => setFirstname(fName)}
-              />
+              <View style={styles.formContainer}>
+
+                <TextInput
+                  style={styles.input}
+                  placeholder="First Name"
+                  placeholderTextColor="#aaaaaa"
+                  onChangeText={(email) => setFirstname(email)}
+                  autoCapitalize="none"
+                  underlineColorAndroid="transparent"
+                  autoCorrect={false}
+                />
+              </View>
               <Text style={styles.detailsTag}>Last Name</Text>
-              <TextInput
-                style={styles.input}
-                placeholderTextColor="#aaaaaa"
-                underlineColorAndroid="transparent"
-                autoCorrect={false}
-                placeholder="Enter Last Name"
-                autoCapitalize="none"
-                onChangeText={(lName) => setLastname(lName)}
-              />
+              <View style={styles.formContainer}>
+
+                <TextInput
+                  style={styles.input}
+                  placeholder="First Name"
+                  placeholderTextColor="#aaaaaa"
+                  onChangeText={(email) => setLastname(email)}
+                  autoCapitalize="none"
+                  underlineColorAndroid="transparent"
+                  autoCorrect={false}
+                />
+              </View>
+
               <Text style={styles.detailsTag}>Email</Text>
-              <TextInput
-                style={styles.input}
-                placeholderTextColor="#aaaaaa"
-                underlineColorAndroid="transparent"
-                autoCorrect={false}
-                placeholder="Enter Email"
-                autoCapitalize="none"
-                onChangeText={(email) => setEmail(email)}
-              />
+              <View style={styles.formContainer}>
+
+                <TextInput
+                  style={styles.input}
+                  placeholder="Email"
+                  placeholderTextColor="#aaaaaa"
+                  onChangeText={(email) => setEmail(email)}
+                  autoCapitalize="none"
+                  underlineColorAndroid="transparent"
+                  autoCorrect={false}
+                />
+              </View>
               <Text style={styles.detailsTag}>Type</Text>
               <Picker
                 selectedValue={type}
@@ -428,11 +468,10 @@ export default function Users() {
               </Picker>
               <View
                 style={{
-                  flex: 1,
                   flexDirection: "row",
                   justifyContent: "space-between",
                   paddingHorizontal: 16,
-                  marginTop: 20,
+                  paddingTop: 5
                 }}
               >
                 <TouchableOpacity
@@ -554,5 +593,19 @@ const styles = StyleSheet.create({
     backgroundColor: "blue",
     padding: 10,
     borderRadius: 5,
+  },
+  input: {
+    height: 48,
+    borderRadius: 5,
+    overflow: "hidden",
+    backgroundColor: "white",
+    paddingLeft: 16,
+    flex: 1,
+    marginRight: 5,
+  },
+  formContainer: {
+    flexDirection: "row",
+    width: "80%",
+    height: 40,
   },
 });
