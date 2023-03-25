@@ -38,6 +38,7 @@ import {
       await allCourse();
     }, []);
   
+    //search
     useEffect(() => {
         filterCourse();
     }, [search, course]);
