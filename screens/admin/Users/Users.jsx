@@ -45,7 +45,7 @@ export default function Users() {
     const allUsers = async () => {
       try {
         const user = [];
-        firebase
+       await firebase
           .firestore()
           .collection("users")
           .onSnapshot((snapshot) => {
@@ -302,47 +302,51 @@ export default function Users() {
                 style={styles.avatarShow}
               />
               <Text style={styles.detailsTag}>First Name</Text>
-              <TextInput
-                style={styles.input}
-                placeholderTextColor="#aaaaaa"
-                underlineColorAndroid="transparent"
-                disabled={isTextDisabled}
-                autoCorrect={false}
-                placeholder="Ishara Madusanka"
-                autoCapitalize="none"
-                value={selectFirstName}
-                onChangeText={(e) => {
-                  setSelectFirstName(e);
-                }}
-              />
+              <View style={styles.formContainer}>
+
+                <TextInput
+                  style={styles.input}
+                  placeholder="First Name"
+                  placeholderTextColor="#aaaaaa"
+                  value={selectFirstName}
+                  onChangeText={(e) => {
+                    setSelectFirstName(e);
+                  }}
+                  autoCapitalize="none"
+                  underlineColorAndroid="transparent"
+                  autoCorrect={false}
+                />
+              </View>
               <Text style={styles.detailsTag}>Last Name</Text>
-              <TextInput
-                style={styles.input}
-                placeholderTextColor="#aaaaaa"
-                disabled={isTextDisabled}
-                underlineColorAndroid="transparent"
-                autoCorrect={false}
-                placeholder="Ishara Madusanka"
-                autoCapitalize="none"
-                value={selectLastName}
-                onChangeText={(e) => {
-                  setSelectLastName(e);
-                }}
-              />
+              <View style={styles.formContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="First Name"
+                  placeholderTextColor="#aaaaaa"
+                  value={selectLastName}
+                  onChangeText={(e) => {
+                    setSelectLastName(e);
+                  }}
+                  autoCapitalize="none"
+                  underlineColorAndroid="transparent"
+                  autoCorrect={false}
+                />
+              </View>
               <Text style={styles.detailsTag}>Email</Text>
-              <TextInput
-                style={styles.input}
-                placeholderTextColor="#aaaaaa"
-                underlineColorAndroid="transparent"
-                disabled={isTextDisabled}
-                autoCorrect={false}
-                placeholder="Ishara@gmail.com"
-                autoCapitalize="none"
-                value={selectEmail}
-                onChangeText={(e) => {
-                  setSelectEmail(e);
-                }}
-              />
+              <View style={styles.formContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="First Name"
+                  placeholderTextColor="#aaaaaa"
+                  value={selectEmail}
+                  onChangeText={(e) => {
+                    setSelectEmail(e);
+                  }}
+                  autoCapitalize="none"
+                  underlineColorAndroid="transparent"
+                  autoCorrect={false}
+                />
+              </View>
               <Text style={styles.detailsTag}>Type</Text>
               <Picker
                 selectedValue={selectType}
@@ -356,11 +360,11 @@ export default function Users() {
               {isTextDisabled && (
                 <View
                   style={{
-                    flex: 1,
+                   
                     flexDirection: "row",
                     justifyContent: "space-between",
-                    paddingHorizontal: 16,
-                    marginTop: 20,
+                    
+                    
                   }}
                 >
                   <TouchableOpacity
@@ -380,12 +384,10 @@ export default function Users() {
               )}
               {!isTextDisabled && (
                 <View
-                  style={{
-                    flex: 1,
+                  style={{    
                     flexDirection: "row",
                     justifyContent: "space-between",
-                    paddingHorizontal: 16,
-                    marginTop: 20,
+                    paddingHorizontal: 16
                   }}
                 >
                   <TouchableOpacity
