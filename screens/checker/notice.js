@@ -16,7 +16,7 @@ import { Dialog } from "@rneui/themed";
 import { firebase } from "../../config";
 // import AppLoader from "../../components/AppLoader";
 // import { confirm } from "react-confirm-box";
-
+import { Ionicons } from '@expo/vector-icons';
 export default function Notice() {
   const [viewNoticeDialogVisible, setViewNoticeDialogVisible] = useState(false);
   const [addNoticeDialogVisible, setAddNoticeDialogVisible] = useState(false);
@@ -195,7 +195,7 @@ export default function Notice() {
   }
 
   const deleteNotice = async () => {
-    Alert.alert('Alert Title', 'My Alert Msg', [
+    Alert.alert('Confirm deletion', 'Are you sure you want to delete this?', [
       {
         text: 'Cancel',
         onPress: () => console.log('Cancel Pressed'),
@@ -225,14 +225,14 @@ export default function Notice() {
                 }}
               />
             </View>
-            <View style={styles.floatingContainer}>
+            {/* <View style={styles.floatingContainer}>
               <TouchableOpacity
                 style={styles.floatingButton}
                 onPress={addNewNoticeDialogOpen}
               >
                 <Text style={styles.viewMoreButtonText}>ADD</Text>
               </TouchableOpacity>
-            </View>
+            </View> */}
           </View>
 
           <FlatList
@@ -257,6 +257,12 @@ export default function Notice() {
               </View>
             )}
           />
+
+<View style={styles.container}>
+              <TouchableOpacity style={styles.button} onPress={addNewNoticeDialogOpen} >
+                <Ionicons name="add" size={24} color="white" />
+              </TouchableOpacity>
+            </View>
 
           {/*View Single Notice*/}
           <Dialog
@@ -593,5 +599,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 3,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 450,
+  },
+  button: {
+    backgroundColor: '#007AFF',
+    borderRadius: 50,
+    width: 60,
+    height: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
+    elevation: 5,
   },
 });
