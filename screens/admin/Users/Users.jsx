@@ -4,7 +4,6 @@ import {
   Alert,
   FlatList,
   Image,
-  Picker,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,7 +12,7 @@ import {
   View,
 } from "react-native";
 import { Searchbar } from "react-native-paper";
-
+import { Picker } from "@react-native-picker/picker";
 import { Dialog } from "@rneui/themed";
 import { firebase } from "../../../config";
 
