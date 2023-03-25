@@ -10,7 +10,7 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { firebase } from "../config";
 
 import ReferScreen from "../screens/RefreshScreen";
-import TeacherDashboard from "../screens/teacher/teacher";
+import TeacherDashboard from "../screens/teacher/SlideItem";
 import Course from "../screens/teacher/course";
 import { useNavigation } from "@react-navigation/native";
 
