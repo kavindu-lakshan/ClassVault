@@ -8,6 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Searchbar } from "react-native-paper";
@@ -149,42 +150,72 @@ export default function Course() {
   };
 
   //delete course from database
-  const deleteCourse = async () => {
-    const options = {
-      labels: {
-        confirmable: "Confirm",
-        cancellable: "Cancel",
-      },
-    };
+  // const deleteCourse = async () => {
+  //   const options = {
+  //     labels: {
+  //       confirmable: "Confirm",
+  //       cancellable: "Cancel",
+  //     },
+  //   };
 
-    const result = await confirm("", options);
-    if (result) {
-      setIsLoading(true);
-      firebase
-        .firestore()
-        .collection("course")
-        .doc(selectedCourse.id)
-        .delete()
-        .then(() => {
-          alert("Successfully Deleted..!!");
-        })
-        .catch((error) => {
-          alert(error);
-        });
-      await refreshPage();
-      closeViewDialog();
-    }
+  //   const result = await confirm("", options);
+  //   if (result) {
+  //     setIsLoading(true);
+  //     firebase
+  //       .firestore()
+  //       .collection("course")
+  //       .doc(selectedCourse.id)
+  //       .delete()
+  //       .then(() => {
+  //         alert("Successfully Deleted..!!");
+  //       })
+  //       .catch((error) => {
+  //         alert(error);
+  //       });
+  //     await refreshPage();
+  //     closeViewDialog();
+  //   }
+  //   console.log("You click No!");
+  // };
+
+  const confirmedDelete = async () => {
+    setIsLoading(true);
+    firebase
+      .firestore()
+      .collection("course")
+      .doc(selectedCourse.id)
+      .delete()
+      .then(() => {
+        alert("Successfully Deleted..!!");
+      })
+      .catch((error) => {
+        alert(error);
+      });
+    await refreshPage();
+    closeViewDialog();
+  };
+
+  const deleteCourse = async () => {
+    Alert.alert("Are you sure you want to delete", "???", [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
+      },
+      { text: "OK", onPress: () => confirmedDelete() },
+    ]);
+
     console.log("You click No!");
   };
 
   return (
     <View>
       {isLoading ? (
-        <View style={{ flex: 5, marginTop: "10%" }}>
+        <View style={{marginTop: "10%" }}>
           <ActivityIndicator size="large" color="#00ff00" />
         </View>
       ) : (
-        <View style={{ flex: 1 }}>
+        <View>
           <View style={styles.searchingBar}>
             <View style={styles.view}>
               <Searchbar
@@ -199,7 +230,7 @@ export default function Course() {
                 style={styles.addBtn}
                 onPress={addNewCourseDialogOpen}
               >
-                <Text style={styles.viewMoreButtonText}>ADD</Text>
+                <Text style={styles.viewMoreButtonText}>New</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -220,7 +251,7 @@ export default function Course() {
                       viewCourseDialogOpen(item);
                     }}
                   >
-                    <Text style={styles.viewMoreButtonText}>View More</Text>
+                    <Text style={styles.viewMoreButtonText}>View Course</Text>
                   </TouchableOpacity>
                 </View>
               )}
@@ -233,7 +264,8 @@ export default function Course() {
             onBackdropPress={viewCourseDialogOpen}
           >
             <View>
-              <Text style={styles.detailsTag}>Module</Text>
+              {/* <Text style={styles.detailsTag}>Module</Text> */}
+              <View style={styles.formContainer}>
               <TextInput
                 style={styles.input}
                 placeholder="Module"
@@ -245,7 +277,9 @@ export default function Course() {
                 underlineColorAndroid="transparent"
                 autoCapitalize="none"
               />
-              <Text style={styles.detailsTag}>Module Code</Text>
+              </View>
+              {/* <Text style={styles.detailsTag}>Module Code</Text> */}
+              <View style={styles.formContainer}>
               <TextInput
                 style={styles.input}
                 placeholder="Module Code"
@@ -257,7 +291,9 @@ export default function Course() {
                 underlineColorAndroid="transparent"
                 autoCapitalize="none"
               />
-              <Text style={styles.detailsTag}>Description</Text>
+              </View>
+              {/* <Text style={styles.detailsTag}>Description</Text> */}
+              <View style={styles.formContainer}>
               <TextInput
                 disabled={isTextDisabled}
                 autoCorrect={false}
@@ -269,10 +305,10 @@ export default function Course() {
                 underlineColorAndroid="transparent"
                 autoCapitalize="none"
               />
+              </View>
               {isTextDisabled && (
                 <View
                   style={{
-                    flex: 1,
                     flexDirection: "row",
                     justifyContent: "space-between",
                     paddingHorizontal: 16,
@@ -297,7 +333,6 @@ export default function Course() {
               {!isTextDisabled && (
                 <View
                   style={{
-                    flex: 1,
                     flexDirection: "row",
                     justifyContent: "space-between",
                     paddingHorizontal: 16,
@@ -328,6 +363,7 @@ export default function Course() {
           >
             <View>
               <Text style={styles.detailsTag}>Module</Text>
+              <View style={styles.formContainer}>
               <TextInput
                 style={styles.input}
                 placeholder="Module"
@@ -337,7 +373,9 @@ export default function Course() {
                 underlineColorAndroid="transparent"
                 autoCapitalize="none"
               />
+              </View>
               <Text style={styles.detailsTag}>Module Code</Text>
+              <View style={styles.formContainer}>
               <TextInput
                 style={styles.input}
                 placeholder="Module Code"
@@ -347,7 +385,9 @@ export default function Course() {
                 underlineColorAndroid="transparent"
                 autoCapitalize="none"
               />
+              </View>
               <Text style={styles.detailsTag}>Description</Text>
+              <View style={styles.formContainer}>
               <TextInput
                 style={styles.input}
                 placeholder="Description"
@@ -357,9 +397,9 @@ export default function Course() {
                 underlineColorAndroid="transparent"
                 autoCapitalize="none"
               />
+              </View>
               <View
                 style={{
-                  flex: 1,
                   flexDirection: "row",
                   justifyContent: "space-between",
                   paddingHorizontal: 16,
@@ -392,7 +432,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f7f7f7",
     borderColor: "#ccc",
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 5,
     padding: 20,
     marginTop: 20,
     shadowColor: "#000",
@@ -457,9 +497,7 @@ const styles = StyleSheet.create({
   },
   editButton: {
     backgroundColor: "blue",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    paddingTop: 0,
+    padding: 10,
     borderRadius: 8,
   },
   dialogButtonText: {
@@ -468,9 +506,7 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     backgroundColor: "red",
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    paddingTop: 0,
+    padding: 10,
     borderRadius: 8,
   },
   searchingBar: {
@@ -562,5 +598,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
+  },
+  formContainer: {
+    flexDirection: "row",
+    width: "80%",
+    height: 40,
   },
 });

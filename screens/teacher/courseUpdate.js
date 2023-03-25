@@ -7,15 +7,17 @@ const courseUpdate = ({ route }) => {
   const courseRef = firebase.firestore().collection("course");
   const [textTopic, onChangeTopicText] = useState(route.params.item.name);
   const [textDesc, onChangeDescText] = useState(route.params.item.name);
+  const [textNum, onChangeNumText] = useState(route.params.item.name);
   const navigation = useNavigation();
 
   const updateCourse = () => {
-    if (textTopic && textDesc && textTopic.length > 0 && textDesc.length > 0) {
+    if (textTopic && textDesc && textNum && textTopic.length > 0 && textDesc.length > 0 && textNum.length > 0) {
         courseRef
         .doc(route.params.item.id)
         .update({
           topic: textTopic,
           description: textDesc,
+          num: textNum,
         })
         .then(() => {
           navigation.navigate("Course");
@@ -28,19 +30,30 @@ const courseUpdate = ({ route }) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.formContainer}>
       <TextInput
         style={styles.textField}
         onChangeText={onChangeTopicText}
         value={textTopic}
         placeholder="Update Topic"
       />
+      <View style={styles.formContainer}>
+      <TextInput
+        style={styles.textField}
+        onChangeText={onChangeDescText}
+        value={textNum}
+        placeholder="Update Module Code"
+      />
+</View>
+      </View>
+      <View style={styles.formContainer}>
       <TextInput
         style={styles.textField}
         onChangeText={onChangeDescText}
         value={textDesc}
         placeholder="Update Description"
       />
-
+</View>
       <Pressable
         style={styles.buttonUpdate}
         onPress={() => {
@@ -80,5 +93,10 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     elevation: 10,
     backgroundColor: "#0de065",
+  },
+  formContainer: {
+    flexDirection: "row",
+    width: "80%",
+    height: 40,
   },
 });

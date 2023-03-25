@@ -48,7 +48,7 @@ const SlideItem = ({item}) => {
         <Text></Text>
         <Text style={styles.price}>Find Courses</Text>
         {/* <Text></Text> */}
-        <Button style={styles.buttonArrow}></Button>
+        {/* <Button style={styles.buttonArrow}></Button> */}
         <Image source={require("../../assets/arrow1.png")} style={styles.imagearrow}></Image>
       </View>
     </View>
