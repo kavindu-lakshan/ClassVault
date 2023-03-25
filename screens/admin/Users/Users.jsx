@@ -17,6 +17,8 @@ import { Picker } from "@react-native-picker/picker";
 import { Dialog } from "@rneui/themed";
 import { firebase } from "../../../config";
 
+import { Ionicons } from '@expo/vector-icons';
+
 export default function Users() {
   const [viewUserDialogVisible, setViewUserDialogVisible] = useState(false);
   const [addUserDialogVisible, setAddUserDialogVisible] = useState(false);
@@ -212,7 +214,7 @@ export default function Users() {
   }
 
   const deleteUser = async () => {
-    Alert.alert('Alert Title', 'My Alert Msg', [
+    Alert.alert('Confirm Deletion', 'Are you sure you want delete this user?', [
       {
         text: 'Cancel',
         onPress: () => console.log('Cancel Pressed'),
@@ -241,14 +243,8 @@ export default function Users() {
                 }}
               />
             </View>
-            <View style={styles.view}>
-              <TouchableOpacity
-                style={styles.addBtn}
-                onPress={addNewUserDialogOpen}
-              >
-                <Text style={styles.viewMoreButtonText}>ADD</Text>
-              </TouchableOpacity>
-            </View>
+
+
           </View>
 
           <FlatList
@@ -277,6 +273,12 @@ export default function Users() {
               </View>
             )}
           />
+
+<View style={styles.container}>
+              <TouchableOpacity style={styles.button} onPress={addNewUserDialogOpen} >
+                <Ionicons name="add" size={24} color="white" />
+              </TouchableOpacity>
+            </View>
 
           {/* View Single User */}
           <Dialog
@@ -394,7 +396,9 @@ export default function Users() {
                   </TouchableOpacity>
                 </View>
               )}
+              
             </View>
+
           </Dialog>
 
           {/*add new user*/}
@@ -599,5 +603,28 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "80%",
     height: 40,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 350,
+  },
+  button: {
+    backgroundColor: '#007AFF',
+    borderRadius: 50,
+    width: 60,
+    height: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
+    elevation: 5,
   },
 });
