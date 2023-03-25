@@ -18,11 +18,12 @@ export default function Header({ screen }) {
   const Drawer = createDrawerNavigator();
   const navigation = useNavigation();
 
-  const logout = async () => {
+  const Logout = async () => {
     try {
       await firebase.auth().signOut();
     } catch (e) {
       console.log(e);
+      navigation.navigate("login");
     }
     navigation.navigate("login");
   };
@@ -67,9 +68,11 @@ export default function Header({ screen }) {
               ? CheckerDashboard
               : drawer.name === "Notices"
               ? Notices
-              : drawer.name === "Saved Items"
-              ? logout
-              : ReferScreen
+              : drawer.name === "Logout"
+              ? () => {
+                  Logout();
+                }
+              : CheckerDashboard
           }
         />
       ))}

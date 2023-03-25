@@ -44,10 +44,10 @@ function App() {
         });
 
       if (loggeduser == "admin") {
-        return <CheckerRoutes />;
+        return <Routes />;
       } else if (loggeduser == "checker") {
         return <CheckerRoutes />;
-      }else{
+      } else {
         return <CheckerRoutes />;
       }
     }
