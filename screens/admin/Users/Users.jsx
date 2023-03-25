@@ -39,29 +39,50 @@ export default function Users() {
   const [isTextDisabled, setIsTextDisabled] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(async () => {
-    await allUsers();
+  const userRef = firebase.firestore().collection("users");
+
+  useEffect(() => {
+    userRef.onSnapshot((querySnapshot) => {
+      const users = [];
+      querySnapshot.forEach((doc) => {
+        const { firstname,
+          lastname,
+          email,
+          type, } = doc.data();
+          users.push({
+          id: doc.id,
+          firstname,
+          lastname,
+          email,
+          type,
+        });
+      });
+      setUsers(users);
+    });
   }, []);
 
   useEffect(() => {
+    const filterUser = () => {
+      alert('ava')
+      console.log(users);
+      let data = users.filter((item) => {
+        return (
+          item.firstname.toLowerCase().includes(search.toLowerCase()) ||
+          item.lastname.toLowerCase().includes(search.toLowerCase()) ||
+          item.email.toLowerCase().includes(search.toLowerCase()) ||
+          item.email.toLowerCase().includes(search.toLowerCase())
+        );
+      });
+      let uniqueObjArray = [
+        ...new Map(data.map((item) => [item["email"], item])).values(),
+      ];
+      setFilter(uniqueObjArray);
+      setIsLoading(false);
+    };
     filterUser();
   }, [search, users]);
 
-  const filterUser = () => {
-    let data = users.filter((item) => {
-      return (
-        item.firstname.toLowerCase().includes(search.toLowerCase()) ||
-        item.lastname.toLowerCase().includes(search.toLowerCase()) ||
-        item.email.toLowerCase().includes(search.toLowerCase()) ||
-        item.email.toLowerCase().includes(search.toLowerCase())
-      );
-    });
-    let uniqueObjArray = [
-      ...new Map(data.map((item) => [item["email"], item])).values(),
-    ];
-    setFilter(uniqueObjArray);
-    setIsLoading(false);
-  };
+
 
   const viewUserDialogOpen = (item) => {
     setSelectedUser(item);
@@ -89,9 +110,9 @@ export default function Users() {
 
   const refreshPage = async () => {
     await allUsers();
-    filterUser();
+    // filterUser();
   };
-  
+
   const allUsers = async () => {
     try {
       const user = [];
@@ -111,7 +132,7 @@ export default function Users() {
             setUsers(user);
           });
         });
-    } catch (e) {}
+    } catch (e) { }
   };
 
   const addUsers = async () => {
@@ -130,7 +151,7 @@ export default function Users() {
 
       addNewUserDialogOpen();
       await refreshPage();
-    } catch (e) {}
+    } catch (e) { }
   };
 
   const updateUser = async () => {
@@ -152,7 +173,7 @@ export default function Users() {
         .update(data);
       await refreshPage();
       setViewUserDialogVisible(false);
-    } catch (e) {}
+    } catch (e) { }
   };
 
   const deleteUser = async () => {
@@ -190,7 +211,7 @@ export default function Users() {
           <ActivityIndicator size="large" color="#00ff00" />
         </View>
       ) : (
-        <View style={{ flex: 1 }}>
+        <View>
           <View style={styles.searchingBar}>
             <View style={styles.view}>
               <Searchbar
@@ -210,34 +231,32 @@ export default function Users() {
             </View>
           </View>
 
-          <ScrollView>
-            <FlatList
-              data={filterUsers}
-              numColumns={1}
-              renderItem={({ item }) => (
-                <View style={styles.userDetailsCard}>
-                  <Image
-                    source={require("../../../assets/download.jpg")}
-                    style={styles.avatar}
-                  />
-                  <View style={styles.detailsContainer}>
-                    <Text style={styles.name}>
-                      Name : {item.firstname} {item.lastname}
-                    </Text>
-                    <Text style={styles.email}>Email: {item.email}</Text>
-                  </View>
-                  <TouchableOpacity
-                    style={styles.viewMoreButton}
-                    onPress={() => {
-                      viewUserDialogOpen(item);
-                    }}
-                  >
-                    <Text style={styles.viewMoreButtonText}>View More</Text>
-                  </TouchableOpacity>
+          <FlatList
+            data={filterUsers}
+            numColumns={1}
+            renderItem={({ item }) => (
+              <View style={styles.userDetailsCard}>
+                <Image
+                  source={require("../../../assets/download.jpg")}
+                  style={styles.avatar}
+                />
+                <View style={styles.detailsContainer}>
+                  <Text style={styles.name}>
+                    Name : "aa"
+                  </Text>
+                  <Text style={styles.email}>Email: {item.email}</Text>
                 </View>
-              )}
-            />
-          </ScrollView>
+                <TouchableOpacity
+                  style={styles.viewMoreButton}
+                  onPress={() => {
+                    viewUserDialogOpen(item);
+                  }}
+                >
+                  <Text style={styles.viewMoreButtonText}>View More</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          />
 
           {/* View Single User */}
           <Dialog
@@ -356,7 +375,7 @@ export default function Users() {
           {/*add new user*/}
           <Dialog
             isVisible={addUserDialogVisible}
-            // onBackdropPress={viewUserDialogOpen}
+          // onBackdropPress={viewUserDialogOpen}
           >
             <View>
               <Image
