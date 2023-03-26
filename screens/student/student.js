@@ -1,10 +1,4 @@
-import {
-    View,
-    Text,
-    StyleSheet,
-    TouchableOpacity,
-  } from "react-native";
-  
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
   import { useNavigation } from "@react-navigation/native";
   import React from "react";
   import LottieView from "lottie-react-native";
@@ -15,7 +9,7 @@ import {
       <TouchableOpacity
         onPress={onPress}
         style={{
-          backgroundColor: "#2196F3",
+            backgroundColor: "#007500",
           borderRadius: 40,
           width: 200,
           height: 75,
@@ -42,7 +36,7 @@ import {
       <View>
         <View style={styles.lottieCOntainer}>
           <LottieView
-            source={require("../../assets/teach.json")}
+            source={require("../../assets/Student.json")}
             autoPlay
             loop
             resizeMode="contain"
@@ -57,7 +51,7 @@ import {
               paddingTop: 20,
             }}
           >
-            Welcome...!
+            Welcome Student!
           </Text>
         </View>
         <View style={{ justifyContent: "center", alignItems: "center" }}>
@@ -72,7 +66,7 @@ import {
               paddingRight: 10,
             }}
           >
-            Please click the button below to navigate to the Tickets section.
+            Touch the button below to navigate to the Tickets.
           </Text>
           <MyButton
             title="Tickets"

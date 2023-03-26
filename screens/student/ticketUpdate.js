@@ -3,15 +3,15 @@ import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
 import { firebase } from "../../config";
 import { useNavigation } from "@react-navigation/native";
 
-const TicketUpdate = ({ route }) => {
-  const noticeRef = firebase.firestore().collection("ticket");
+const ticketUpdate = ({ route }) => {
+  const ticketRef = firebase.firestore().collection("ticket");
   const [textTopic, onChangeTopicText] = useState(route.params.item.name);
   const [textDesc, onChangeDescText] = useState(route.params.item.name);
   const navigation = useNavigation();
 
   const updateTicket = () => {
     if (textTopic && textDesc && textTopic.length > 0 && textDesc.length > 0) {
-      noticeRef
+      ticketRef
         .doc(route.params.item.id)
         .update({
           topic: textTopic,
@@ -53,7 +53,7 @@ const TicketUpdate = ({ route }) => {
   );
 };
 
-export default TicketUpdate;
+export default ticketUpdate;
 
 const styles = StyleSheet.create({
   container: {
