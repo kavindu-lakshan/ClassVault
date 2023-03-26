@@ -29,7 +29,7 @@ const MyButton = ({ onPress, title }) => {
   );
 };
 
-const Checker = () => {
+const Dashboard = () => {
   const navigation = useNavigation();
   return (
     <View>
@@ -65,10 +65,10 @@ const Checker = () => {
             paddingRight: 10,
           }}
         >
-          Please click the button below to navigate to the Notices section.
+          Please click the button below to navigate to the Users section.
         </Text>
         <MyButton
-          title="Notices"
+          title="Users"
           onPress={() => navigation.navigate("Notices")}
         />
       </View>
@@ -84,4 +84,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Checker;
+export default Dashboard;
