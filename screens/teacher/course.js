@@ -466,7 +466,7 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   viewMoreButton: {
-    backgroundColor: "#ccc",
+    backgroundColor: "#EF92C2",
     padding: 10,
     borderRadius: 5,
   },
@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
     marginRight: "auto",
   },
   editButton: {
-    backgroundColor: "blue",
+    backgroundColor: "#091052",
     padding: 10,
     borderRadius: 8,
   },
@@ -505,7 +505,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   deleteButton: {
-    backgroundColor: "red",
+    backgroundColor: "#EF92C2",
     padding: 10,
     borderRadius: 8,
   },
@@ -518,7 +518,7 @@ const styles = StyleSheet.create({
   },
 
   addBtn: {
-    backgroundColor: "blue",
+    backgroundColor: "#091052",
     padding: 10,
     borderRadius: 5,
   },
