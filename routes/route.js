@@ -6,13 +6,23 @@ import Users from "../screens/admin/Users/Users";
 
 // import AdminDashboard from "../layouts/Checker-Side-Nav";
 
+//Teacher Routes
+import TeacherDashboard from "../layouts/Teacher-Side-Nav";
+import Course from "../screens/teacher/course";
+import courseUpdate from "../screens/teacher/course";
+
 const Stack = createStackNavigator();
 
 export default function Routes() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="admin-home" component={AdminDashboard} />
-      <Stack.Screen name="Users" component={Users} />
+
+      {/* checker routes */}
+      <Stack.Screen name="checker-home" component={CheckerDashboard} />
+
+      {/* teacher routes */}
+      <Stack.Screen name="teacher-home" component={TeacherDashboard} />
     </Stack.Navigator>
   );
 }
