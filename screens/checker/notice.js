@@ -142,18 +142,27 @@ export default function Notice() {
   //add data
   const addNotice = async () => {
     try {
-      setIsLoading(true);
-      const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-      const data = {
-        topic: addTopic,
-        description: addDesc,
-        createdAt: timestamp,
-      };
+      if (!addTopic || !addDesc) {
+        Alert("Please fill all fields");
+      } else {
+        setIsLoading(true);
+        const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+        const data = {
+          topic: addTopic,
+          description: addDesc,
+          createdAt: timestamp,
+        };
 
-      await firebase.firestore().collection("notice").add(data);
-
-      addNewNoticeDialogOpen();
-      await refreshPage();
+        await firebase
+          .firestore()
+          .collection("notice")
+          .add(data)
+          .then(async () => {
+            addNewNoticeDialogOpen();
+            await refreshPage();
+          })
+          .catch(() => {});
+      }
     } catch (e) {}
   };
 
@@ -170,10 +179,16 @@ export default function Notice() {
         .firestore()
         .collection("notice")
         .doc(selectedNotice.id)
-        .update(data);
-      await refreshPage();
-      setViewNoticeDialogVisible(false);
+        .update(data)
+        .then(async () => {
+          await allNotices();
+          await refreshPage();
+          setViewNoticeDialogVisible(false);
+        });
     } catch (e) {}
+    // await allNotices();
+    // await refreshPage();
+    // setViewNoticeDialogVisible(false);
   };
 
   //delete data from database
@@ -184,7 +199,9 @@ export default function Notice() {
       .collection("notice")
       .doc(selectedNotice.id)
       .delete()
-      .then(() => {
+      .then(async () => {
+        await refreshPage();
+        closeViewDialog();
         alert("Successfully Deleted..!!");
       })
       .catch((error) => {
@@ -445,7 +462,7 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   viewMoreButton: {
-    backgroundColor: "#ccc",
+    backgroundColor: "#03C04A",
     padding: 10,
     borderRadius: 5,
   },

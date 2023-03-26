@@ -45,6 +45,30 @@ export default function Users() {
   const userRef = firebase.firestore().collection("users");
 
   useEffect(() => {
+    const allUsers = async () => {
+      try {
+        const user = [];
+        setIsLoading(true);
+        let result = await firebase
+          .firestore()
+          .collection("users")
+          .get()
+          .then((snapshot) => {
+            snapshot.forEach((doc) => {
+              const { firstname, lastname, email, type } = doc.data();
+              user.push({
+                id: doc.id,
+                firstname,
+                lastname,
+                email,
+                type,
+              });
+              setUsers(user);
+            });
+          });
+        console.log(result);
+      } catch (e) {}
+    };
     allUsers();
   }, []);
 
@@ -93,7 +117,7 @@ export default function Users() {
 
   const refreshPage = async () => {
     await allUsers();
-    await filterUser();
+    // await filterUser();
   };
 
   const allUsers = async () => {
@@ -139,6 +163,7 @@ export default function Users() {
 
   const addUsers = async () => {
     try {
+      setIsLoading(true);
       if (!firstname || !lastname || !email || !type) {
         alert("Please fill all details");
       } else {
@@ -148,10 +173,20 @@ export default function Users() {
           email: email,
           type: type,
         };
-        let result = await firebase.firestore().collection("users").add(data);
-        alert("Successfully Added..!!");
+        let result = await firebase
+          .firestore()
+          .collection("users")
+          .add(data)
+          .then(() => {
+            closeAddDialog();
+            refreshPage();
+            setIsLoading(false);
+            alert("Successfully Added..!!");
+          })
+          .catch(() => {});
+        // closeAddDialog();
         refreshPage();
-        closeAddDialog();
+        setIsLoading(false);
       }
     } catch (e) {
       alert("erre");
@@ -164,7 +199,6 @@ export default function Users() {
   const updateUser = async () => {
     try {
       setIsLoading(true);
-      alert("update user");
       const timestamp = firebase.firestore.FieldValue.serverTimestamp();
       const data = {
         firstname: selectFirstName,
@@ -179,10 +213,12 @@ export default function Users() {
         .collection("users")
         .doc(selectedUser.id)
         .update(data)
-        .then(() => {
-          alert("Successfully Updated..!!");
+        .then(async () => {
           setViewUserDialogVisible(!viewUserDialogVisible);
-          refreshPage();
+          await allUsers();
+          await refreshPage();
+
+          alert("Successfully Updated..!!");
         })
         .catch(() => {
           alert("error");
@@ -199,12 +235,15 @@ export default function Users() {
       .collection("users")
       .doc(selectedUser.id)
       .delete()
-      .then(() => {
+      .then(async () => {
+        await allUsers();
+        await refreshPage();
         alert("Successfully Deleted..!!");
       })
       .catch((error) => {
         alert(error);
       });
+    await allUsers();
     await refreshPage();
     closeViewDialog();
   };
@@ -529,7 +568,7 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   viewMoreButton: {
-    backgroundColor: "#ccc",
+    backgroundColor: "#03C04A",
     padding: 10,
     borderRadius: 5,
   },

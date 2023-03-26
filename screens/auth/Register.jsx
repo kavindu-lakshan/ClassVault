@@ -21,7 +21,7 @@ const Register = () => {
 
   const registerUser = async (email, password, firstname, lastname) => {
     setLoading(true);
-    const type = "admin";
+    const type = "student";
     await firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
