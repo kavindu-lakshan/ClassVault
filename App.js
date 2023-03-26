@@ -8,6 +8,7 @@ import CheckerRoutes from "./routes/checker-route";
 import TeacherRoutes from "./routes/teacher-route";
 
 import { Dimensions } from "react-native";
+
 import Splash from "./components/Splash";
 
 const { width, height } = Dimensions.get("window");
