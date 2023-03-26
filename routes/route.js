@@ -19,6 +19,8 @@ import courseUpdate from "../screens/teacher/course";
 
 const Stack = createStackNavigator();
 
+
+
 export default function Routes() {
   return (
     <Stack.Navigator>
