@@ -211,7 +211,7 @@ export default function Course() {
   return (
     <View>
       {isLoading ? (
-        <View style={{marginTop: "10%" }}>
+        <View style={{ marginTop: "10%" }}>
           <ActivityIndicator size="large" color="#00ff00" />
         </View>
       ) : (
@@ -266,45 +266,45 @@ export default function Course() {
             <View>
               {/* <Text style={styles.detailsTag}>Module</Text> */}
               <View style={styles.formContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Module"
-                disabled={isTextDisabled}
-                autoCorrect={false}
-                placeholderTextColor="#aaaaaa"
-                onChangeText={(topic) => setSelectTopic(topic)}
-                value={selectTopic}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-              />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Module"
+                  disabled={isTextDisabled}
+                  autoCorrect={false}
+                  placeholderTextColor="#aaaaaa"
+                  onChangeText={(topic) => setSelectTopic(topic)}
+                  value={selectTopic}
+                  underlineColorAndroid="transparent"
+                  autoCapitalize="none"
+                />
               </View>
               {/* <Text style={styles.detailsTag}>Module Code</Text> */}
               <View style={styles.formContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Module Code"
-                disabled={isTextDisabled}
-                autoCorrect={false}
-                placeholderTextColor="#aaaaaa"
-                onChangeText={(num) => setSelectNum(num)}
-                value={selectNum}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-              />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Module Code"
+                  disabled={isTextDisabled}
+                  autoCorrect={false}
+                  placeholderTextColor="#aaaaaa"
+                  onChangeText={(num) => setSelectNum(num)}
+                  value={selectNum}
+                  underlineColorAndroid="transparent"
+                  autoCapitalize="none"
+                />
               </View>
               {/* <Text style={styles.detailsTag}>Description</Text> */}
               <View style={styles.formContainer}>
-              <TextInput
-                disabled={isTextDisabled}
-                autoCorrect={false}
-                style={styles.input}
-                placeholder="Description"
-                placeholderTextColor="#aaaaaa"
-                onChangeText={(description) => setSelectDesc(description)}
-                value={selectDesc}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-              />
+                <TextInput
+                  disabled={isTextDisabled}
+                  autoCorrect={false}
+                  style={styles.input}
+                  placeholder="Description"
+                  placeholderTextColor="#aaaaaa"
+                  onChangeText={(description) => setSelectDesc(description)}
+                  value={selectDesc}
+                  underlineColorAndroid="transparent"
+                  autoCapitalize="none"
+                />
               </View>
               {isTextDisabled && (
                 <View
@@ -364,39 +364,39 @@ export default function Course() {
             <View>
               <Text style={styles.detailsTag}>Module</Text>
               <View style={styles.formContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Module"
-                placeholderTextColor="#aaaaaa"
-                onChangeText={(topic) => setAddTopic(topic)}
-                value={addTopic}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-              />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Module"
+                  placeholderTextColor="#aaaaaa"
+                  onChangeText={(topic) => setAddTopic(topic)}
+                  value={addTopic}
+                  underlineColorAndroid="transparent"
+                  autoCapitalize="none"
+                />
               </View>
               <Text style={styles.detailsTag}>Module Code</Text>
               <View style={styles.formContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Module Code"
-                placeholderTextColor="#aaaaaa"
-                onChangeText={(num) => setAddNum(num)}
-                value={addNum}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-              />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Module Code"
+                  placeholderTextColor="#aaaaaa"
+                  onChangeText={(num) => setAddNum(num)}
+                  value={addNum}
+                  underlineColorAndroid="transparent"
+                  autoCapitalize="none"
+                />
               </View>
               <Text style={styles.detailsTag}>Description</Text>
               <View style={styles.formContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Description"
-                placeholderTextColor="#aaaaaa"
-                onChangeText={(description) => setAddDesc(description)}
-                value={addDesc}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-              />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Description"
+                  placeholderTextColor="#aaaaaa"
+                  onChangeText={(description) => setAddDesc(description)}
+                  value={addDesc}
+                  underlineColorAndroid="transparent"
+                  autoCapitalize="none"
+                />
               </View>
               <View
                 style={{

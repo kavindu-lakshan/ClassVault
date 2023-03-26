@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  SectionList,
   Image,
   ScrollView,
   StyleSheet,
@@ -15,6 +16,8 @@ import { Searchbar } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
 import { Dialog } from "@rneui/themed";
 import { firebase } from "../../../config";
+import * as Animatable from "react-native-animatable";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function Users() {
   const [viewUserDialogVisible, setViewUserDialogVisible] = useState(false);
@@ -45,10 +48,12 @@ export default function Users() {
     const allUsers = async () => {
       try {
         const user = [];
-       await firebase
+        setIsLoading(true);
+        let result = await firebase
           .firestore()
           .collection("users")
-          .onSnapshot((snapshot) => {
+          .get()
+          .then((snapshot) => {
             snapshot.forEach((doc) => {
               const { firstname, lastname, email, type } = doc.data();
               user.push({
@@ -61,11 +66,11 @@ export default function Users() {
               setUsers(user);
             });
           });
-      } catch (e) { }
-    }
-
-    allUsers()
-  }, [users]);
+        console.log(result);
+      } catch (e) {}
+    };
+    allUsers();
+  }, []);
 
   useEffect(() => {
     const filterUser = () => {
@@ -86,8 +91,6 @@ export default function Users() {
     filterUser();
   }, [search, users]);
 
-
-
   const viewUserDialogOpen = (item) => {
     setSelectedUser(item);
     setSelectEmail(item.email);
@@ -97,7 +100,7 @@ export default function Users() {
     setViewUserDialogVisible(!viewUserDialogVisible);
   };
   const addNewUserDialogOpen = () => {
-    setAddUserDialogVisible(true);
+    setAddUserDialogVisible(!addUserDialogVisible);
   };
 
   const closeViewDialog = () => {
@@ -105,8 +108,7 @@ export default function Users() {
     setViewUserDialogVisible(!viewUserDialogVisible);
   };
   const closeAddDialog = () => {
-    alert("close")
-    setAddUserDialogVisible(false);
+    setAddUserDialogVisible(!addUserDialogVisible);
   };
 
   const enableEditableText = () => {
@@ -115,16 +117,18 @@ export default function Users() {
 
   const refreshPage = async () => {
     await allUsers();
-    filterUser();
+    // await filterUser();
   };
 
   const allUsers = async () => {
     try {
       const user = [];
-      firebase
+      setIsLoading(true);
+      let result = await firebase
         .firestore()
         .collection("users")
-        .onSnapshot((snapshot) => {
+        .get()
+        .then((snapshot) => {
           snapshot.forEach((doc) => {
             const { firstname, lastname, email, type } = doc.data();
             user.push({
@@ -137,7 +141,8 @@ export default function Users() {
             setUsers(user);
           });
         });
-    } catch (e) { }
+      console.log(result);
+    } catch (e) {}
   };
 
   const filterUser = () => {
@@ -158,30 +163,36 @@ export default function Users() {
 
   const addUsers = async () => {
     try {
+      setIsLoading(true);
       if (!firstname || !lastname || !email || !type) {
-        alert("Please fill all details")
+        alert("Please fill all details");
       } else {
-        alert("add user")
-        setIsLoading(true);
-        const timestamp = firebase.firestore.FieldValue.serverTimestamp();
         const data = {
           firstname: firstname,
           lastname: lastname,
           email: email,
           type: type,
-          timestamp: timestamp,
         };
-        firebase.firestore().collection("users").add(data).then(() => {
-          alert("Successfully Added..!!")
-          setAddUserDialogVisible(false);
-          refreshPage();
-        }).catch(() => {
-          alert("error")
-        })
+        let result = await firebase
+          .firestore()
+          .collection("users")
+          .add(data)
+          .then(() => {
+            closeAddDialog();
+            refreshPage();
+            setIsLoading(false);
+            alert("Successfully Added..!!");
+          })
+          .catch(() => {});
+        // closeAddDialog();
+        refreshPage();
+        setIsLoading(false);
       }
     } catch (e) {
-      alert("erre")
-      console.log(e)
+      alert("erre");
+      console.log(e);
+      closeAddDialog();
+      refreshPage();
     }
   };
 
@@ -197,14 +208,24 @@ export default function Users() {
         type: selectType,
         timestamp: timestamp,
       };
-      const result = await firebase
+      let result = await firebase
         .firestore()
         .collection("users")
         .doc(selectedUser.id)
-        .update(data);
-      await refreshPage();
-      setViewUserDialogVisible(false);
-    } catch (e) { }
+        .update(data)
+        .then(async () => {
+          setViewUserDialogVisible(!viewUserDialogVisible);
+          await allUsers();
+          await refreshPage();
+
+          alert("Successfully Updated..!!");
+        })
+        .catch(() => {
+          alert("error");
+        });
+    } catch (e) {
+      alert(e);
+    }
   };
 
   const confirmedDelete = async () => {
@@ -214,24 +235,27 @@ export default function Users() {
       .collection("users")
       .doc(selectedUser.id)
       .delete()
-      .then(() => {
+      .then(async () => {
+        await allUsers();
+        await refreshPage();
         alert("Successfully Deleted..!!");
       })
       .catch((error) => {
         alert(error);
       });
+    await allUsers();
     await refreshPage();
     closeViewDialog();
-  }
+  };
 
   const deleteUser = async () => {
-    Alert.alert('Alert Title', 'My Alert Msg', [
+    Alert.alert("Confirm Deletion", "Are you sure you want delete this user?", [
       {
-        text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
-        style: 'cancel',
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
       },
-      { text: 'OK', onPress: () => confirmedDelete() },
+      { text: "OK", onPress: () => confirmedDelete() },
     ]);
 
     console.log("You click No!");
@@ -245,8 +269,8 @@ export default function Users() {
         </View>
       ) : (
         <View>
-          <View >
-            <View style={styles.searchingBar}>
+          <View>
+            <View style={{ marginTop: 20, marginHorizontal: 20 }}>
               <Searchbar
                 placeholder="Search"
                 onChangeText={(search) => {
@@ -254,21 +278,18 @@ export default function Users() {
                 }}
               />
             </View>
-            <View style={styles.view}>
-              <TouchableOpacity
-                style={styles.addBtn}
-                onPress={addNewUserDialogOpen}
-              >
-                <Text style={styles.viewMoreButtonText}>ADD</Text>
-              </TouchableOpacity>
-            </View>
           </View>
 
           <FlatList
             data={filterUsers}
             numColumns={1}
-            renderItem={({ item }) => (
-              <View style={styles.userDetailsCard}>
+            renderItem={({ item, index }) => (
+              <Animatable.View
+                animation={"fadeInUp"}
+                duration={1000}
+                delay={index}
+                style={styles.userDetailsCard}
+              >
                 <Image
                   source={require("../../../assets/download.jpg")}
                   style={styles.avatar}
@@ -287,14 +308,23 @@ export default function Users() {
                 >
                   <Text style={styles.viewMoreButtonText}>View More</Text>
                 </TouchableOpacity>
-              </View>
+              </Animatable.View>
             )}
           />
+
+          <View style={styles.container}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={addNewUserDialogOpen}
+            >
+              <Ionicons name="add" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
 
           {/* View Single User */}
           <Dialog
             isVisible={viewUserDialogVisible}
-            onBackdropPress={viewUserDialogOpen}
+            onBackdropPress={closeViewDialog}
           >
             <View>
               <Image
@@ -303,7 +333,6 @@ export default function Users() {
               />
               <Text style={styles.detailsTag}>First Name</Text>
               <View style={styles.formContainer}>
-
                 <TextInput
                   style={styles.input}
                   placeholder="First Name"
@@ -312,6 +341,7 @@ export default function Users() {
                   onChangeText={(e) => {
                     setSelectFirstName(e);
                   }}
+                  disabled={isTextDisabled}
                   autoCapitalize="none"
                   underlineColorAndroid="transparent"
                   autoCorrect={false}
@@ -327,6 +357,7 @@ export default function Users() {
                   onChangeText={(e) => {
                     setSelectLastName(e);
                   }}
+                  disabled={isTextDisabled}
                   autoCapitalize="none"
                   underlineColorAndroid="transparent"
                   autoCorrect={false}
@@ -342,6 +373,7 @@ export default function Users() {
                   onChangeText={(e) => {
                     setSelectEmail(e);
                   }}
+                  disabled={isTextDisabled}
                   autoCapitalize="none"
                   underlineColorAndroid="transparent"
                   autoCorrect={false}
@@ -350,7 +382,6 @@ export default function Users() {
               <Text style={styles.detailsTag}>Type</Text>
               <Picker
                 selectedValue={selectType}
-                style={{ height: 30, width: 200 }}
                 onValueChange={(itemValue) => setSelectType(itemValue)}
               >
                 <Picker.Item label="none" value="Please select value" />
@@ -360,11 +391,10 @@ export default function Users() {
               {isTextDisabled && (
                 <View
                   style={{
-                   
                     flexDirection: "row",
                     justifyContent: "space-between",
-                    
-                    
+                    paddingHorizontal: 20,
+                    marginTop: 20,
                   }}
                 >
                   <TouchableOpacity
@@ -384,10 +414,11 @@ export default function Users() {
               )}
               {!isTextDisabled && (
                 <View
-                  style={{    
+                  style={{
                     flexDirection: "row",
                     justifyContent: "space-between",
-                    paddingHorizontal: 16
+                    paddingHorizontal: 20,
+                    marginTop: 20,
                   }}
                 >
                   <TouchableOpacity
@@ -410,7 +441,7 @@ export default function Users() {
           {/*add new user*/}
           <Dialog
             isVisible={addUserDialogVisible}
-          // onBackdropPress={viewUserDialogOpen}
+            // onBackdropPress={viewUserDialogOpen}
           >
             <View>
               <Image
@@ -420,7 +451,6 @@ export default function Users() {
 
               <Text style={styles.detailsTag}>First Name</Text>
               <View style={styles.formContainer}>
-
                 <TextInput
                   style={styles.input}
                   placeholder="First Name"
@@ -433,7 +463,6 @@ export default function Users() {
               </View>
               <Text style={styles.detailsTag}>Last Name</Text>
               <View style={styles.formContainer}>
-
                 <TextInput
                   style={styles.input}
                   placeholder="First Name"
@@ -447,7 +476,6 @@ export default function Users() {
 
               <Text style={styles.detailsTag}>Email</Text>
               <View style={styles.formContainer}>
-
                 <TextInput
                   style={styles.input}
                   placeholder="Email"
@@ -461,7 +489,6 @@ export default function Users() {
               <Text style={styles.detailsTag}>Type</Text>
               <Picker
                 selectedValue={type}
-                style={{ height: 30, width: 200 }}
                 onValueChange={(itemValue) => setType(itemValue)}
               >
                 <Picker.Item label="none" value="Please select value" />
@@ -472,19 +499,23 @@ export default function Users() {
                 style={{
                   flexDirection: "row",
                   justifyContent: "space-between",
-                  paddingHorizontal: 16,
-                  paddingTop: 5
+                  paddingHorizontal: 20,
+                  marginTop: 20,
                 }}
               >
                 <TouchableOpacity
                   style={styles.editButton}
-                  onPress={closeAddDialog}
+                  onPress={(e) => {
+                    closeAddDialog();
+                  }}
                 >
                   <Text style={styles.dialogButtonText}>Cancel</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.deleteButton}
-                  onPress={addUsers}
+                  onPress={(e) => {
+                    addUsers();
+                  }}
                 >
                   <Text style={styles.dialogButtonText}>Add</Text>
                 </TouchableOpacity>
@@ -530,13 +561,14 @@ const styles = StyleSheet.create({
     borderRadius: 25,
   },
   name: {
+    marginBottom: 10,
     fontWeight: "bold",
   },
   email: {
     color: "#666",
   },
   viewMoreButton: {
-    backgroundColor: "#ccc",
+    backgroundColor: "#03C04A",
     padding: 10,
     borderRadius: 5,
   },
@@ -567,10 +599,8 @@ const styles = StyleSheet.create({
   },
   editButton: {
     backgroundColor: "blue",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    paddingTop: 0,
     borderRadius: 8,
+    padding: 10,
   },
   dialogButtonText: {
     color: "white",
@@ -578,10 +608,8 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     backgroundColor: "red",
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    paddingTop: 0,
     borderRadius: 8,
+    padding: 10,
   },
   searchingBar: {
     marginTop: 10,
@@ -609,5 +637,28 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "80%",
     height: 40,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 350,
+  },
+  button: {
+    backgroundColor: "#007AFF",
+    borderRadius: 50,
+    width: 60,
+    height: 60,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
+    elevation: 5,
   },
 });

@@ -5,25 +5,25 @@ import {
   FontAwesome5,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
-import DrawerItems from "../constants/CheckerDrawerItem";
+import DrawerItems from "../constants/StudentDrawerItem";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { firebase } from "../config";
 
 import ReferScreen from "../screens/RefreshScreen";
-import CheckerDashboard from "../screens/checker/checker";
-import Notices from "../screens/checker/notice";
+import StudentDashboard from "../screens/student/student";
+import Tickets from "../screens/student/ticket";
+//import ticketUpdate from "../screens/student/ticketUpdate";
 import { useNavigation } from "@react-navigation/native";
 
 export default function Header({ screen }) {
   const Drawer = createDrawerNavigator();
   const navigation = useNavigation();
 
-  const Logout = async () => {
+  const logout = async () => {
     try {
       await firebase.auth().signOut();
     } catch (e) {
       console.log(e);
-      navigation.navigate("login");
     }
     navigation.navigate("login");
   };
@@ -64,15 +64,13 @@ export default function Header({ screen }) {
             headerShown: true,
           }}
           component={
-            drawer.name === "CheckerDashboard"
-              ? CheckerDashboard
-              : drawer.name === "Notices"
-              ? Notices
-              : drawer.name === "Logout"
-              ? () => {
-                  Logout();
-                }
-              : CheckerDashboard
+            drawer.name === "StudentDashboard"
+              ? StudentDashboard
+              : drawer.name === "Tickets"
+              ? Tickets
+              : drawer.name === "Saved Items"
+              ? logout
+              : ReferScreen
           }
         />
       ))}

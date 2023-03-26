@@ -9,4 +9,9 @@ export default [
     iconType: "Material",
     iconName: "bookmark-check-outline",
   },
+  {
+    name: "Logout",
+    iconType: "Material",
+    iconName: "bookmark-check-outline",
+  },
 ];

@@ -4,7 +4,7 @@ import {
   TouchableOpacity,
   TextInput,
   StyleSheet,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import { firebase } from "../../config";
@@ -20,7 +20,6 @@ const Register = () => {
   const navigation = useNavigation();
 
   const registerUser = async (email, password, firstname, lastname) => {
-    setLoading(true);
     const type = "teacher";
     await firebase
       .auth()
@@ -50,7 +49,7 @@ const Register = () => {
       .catch((error) => {
         alert(error.message);
       });
-      setLoading(false);
+    setLoading(false);
   };
   return (
     <View style={styles.container}>
@@ -111,9 +110,11 @@ const Register = () => {
         onPress={() => registerUser(email, password, firstname, lastname)}
         style={styles.button}
       >
-       {
-          loading ? <ActivityIndicator size="large" color="#00ff00" /> : <Text style={{ fontWeight: "bold", fontSize: 22 }}>Register</Text>
-        }
+        {loading ? (
+          <ActivityIndicator size="large" color="#00ff00" />
+        ) : (
+          <Text style={{ fontWeight: "bold", fontSize: 22 }}>Register</Text>
+        )}
       </TouchableOpacity>
     </View>
   );
