@@ -18,7 +18,7 @@ export default function Header({ screen }) {
   const Drawer = createDrawerNavigator();
   const navigation = useNavigation();
 
-  const logout = async () => {
+  const Logout = async () => {
     try {
       await firebase.auth().signOut();
     } catch (e) {
@@ -69,7 +69,7 @@ export default function Header({ screen }) {
               : drawer.name === "Users"
               ? Users
               : drawer.name === "Logout"
-              ? logout
+              ? ()=>{Logout()}
               : Dashboard
           }
         />

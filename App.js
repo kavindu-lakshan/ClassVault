@@ -5,7 +5,7 @@ import { firebase } from "./config";
 import AuhRoutes from "./routes/auth_routes";
 import Routes from "./routes/route";
 import CheckerRoutes from "./routes/checker-route";
-import StudentRoutes from "./routes/student-route";
+import TeacherRoutes from "./routes/teacher-route";
 
 import { Dimensions } from "react-native";
 import Splash from "./components/Splash";
@@ -48,10 +48,11 @@ function App() {
         return <Routes />;
       } else if (loggeduser == "checker") {
         return <CheckerRoutes />;
+      } else if (loggeduser == "teacher") {
+        return <TeacherRoutes />;
+      } else if (loggeduser == "student") {
+        return <StudentRoutes />;
       }
-      else if (loggeduser == "student") {
-      return <StudentRoutes />;
-    }
     }
 
     if (!firebase.auth().currentUser) {

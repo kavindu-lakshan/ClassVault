@@ -5,25 +5,24 @@ import {
   FontAwesome5,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
-import DrawerItems from "../constants/CheckerDrawerItem";
+import DrawerItems from "../constants/TeacherDrawerItem";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { firebase } from "../config";
 
 import ReferScreen from "../screens/RefreshScreen";
-import CheckerDashboard from "../screens/checker/checker";
-import Notices from "../screens/checker/notice";
+import TeacherDashboard from "../screens/teacher/teacher";
+import Course from "../screens/teacher/course";
 import { useNavigation } from "@react-navigation/native";
 
 export default function Header({ screen }) {
   const Drawer = createDrawerNavigator();
   const navigation = useNavigation();
 
-  const Logout = async () => {
+  const logout = async () => {
     try {
       await firebase.auth().signOut();
     } catch (e) {
       console.log(e);
-      navigation.navigate("login");
     }
     navigation.navigate("login");
   };
@@ -64,15 +63,13 @@ export default function Header({ screen }) {
             headerShown: true,
           }}
           component={
-            drawer.name === "CheckerDashboard"
-              ? CheckerDashboard
-              : drawer.name === "Notices"
-              ? Notices
-              : drawer.name === "Logout"
-              ? () => {
-                  Logout();
-                }
-              : CheckerDashboard
+            drawer.name === "TeacherDashboard"
+              ? TeacherDashboard
+              : drawer.name === "Course"
+              ? Course
+              : drawer.name === "Saved Items"
+              ? logout
+              : ReferScreen
           }
         />
       ))}
