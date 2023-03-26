@@ -50,6 +50,8 @@ function App() {
         return <CheckerRoutes />;
       } else if (loggeduser == "teacher") {
         return <TeacherRoutes />;
+      } else if (loggeduser == "student") {
+        return <StudentRoutes />;
       }
     }
 

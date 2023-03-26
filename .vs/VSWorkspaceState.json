@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\assets",
+    "\\layouts",
+    "\\routes",
+    "\\screens",
+    "\\screens\\auth",
+    "\\screens\\checker",
+    "\\screens\\student"
+  ],
+  "SelectedNode": "\\screens\\auth\\Register.jsx",
+  "PreviewInSolutionExplorer": false
+}
